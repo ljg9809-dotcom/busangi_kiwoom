@@ -1,0 +1,17 @@
+# Secrets and private application data must never be published.
+.busangi-private/
+.env
+.env.*
+!.env.example
+*.dpapi
+*.dpapi.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.pem
+*.pfx
+*.key
+node_modules/
+data/
+*.log
+.DS_Store

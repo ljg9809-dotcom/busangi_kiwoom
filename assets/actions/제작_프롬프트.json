@@ -1,0 +1,62 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "assets/busangi-character.png",
+  "transparent_background": true,
+  "outputDirectory": "assets/actions/",
+  "prompts": [
+    {
+      "id": "eat",
+      "prompt": "Create a production-ready isolated 2D action illustration for the Korean web game Busangi. The supplied image is CHARACTER IDENTITY AND DRAWING STYLE reference: preserve this exact young boy's messy black fringe hair, thick curved eyebrows, small vertical oval black eyes, simple white face, friendly proportions, loose hoodie with zipper, loose trousers and sneakers. Match the original bold imperfect black ink contours and sparse diagonal gray hatching; do NOT redesign as a different person, anime, pixel art or 3D. BLACK WHITE AND GRAY ONLY, opaque white skin/clothing interiors with black outlines, no color. Single complete character, small safe padding, no labels, no lettering, no extra people, no background scenery, no glow, no opaque rectangle, no painted ground or cast shadow. TRUE TRANSPARENT alpha background. The body and activity must read clearly at about 240px display height. Front three-quarter view.\nACTION: happily eating a bowl of Busan pork soup and rice. Boy seated on a simple stool at a small table, holding a spoon near mouth, bowl with a few steam curls and small rice bowl on table. Include the complete stool, small table and full boy including shoes as ONE self-contained foreground action scene. No restaurant background."
+    },
+    {
+      "id": "drink",
+      "prompt": "Create a production-ready isolated 2D action illustration for the Korean web game Busangi. The supplied image is CHARACTER IDENTITY AND DRAWING STYLE reference: preserve this exact young boy's messy black fringe hair, thick curved eyebrows, small vertical oval black eyes, simple white face, friendly proportions, loose hoodie with zipper, loose trousers and sneakers. Match the original bold imperfect black ink contours and sparse diagonal gray hatching; do NOT redesign as a different person, anime, pixel art or 3D. BLACK WHITE AND GRAY ONLY, opaque white skin/clothing interiors with black outlines, no color. Single complete character, small safe padding, no labels, no lettering, no extra people, no background scenery, no glow, no opaque rectangle, no painted ground or cast shadow. TRUE TRANSPARENT alpha background. The body and activity must read clearly at about 240px display height. Front three-quarter view.\nACTION: seated casually on a simple stool, holding a takeaway cup with lid and straw to his mouth and sipping. Relaxed shoulders, content expression; other hand holding the cup or resting on knee. Include whole body and stool, no table, no cafe background."
+    },
+    {
+      "id": "view",
+      "prompt": "Create a production-ready isolated 2D action illustration for the Korean web game Busangi. The supplied image is CHARACTER IDENTITY AND DRAWING STYLE reference: preserve this exact young boy's messy black fringe hair, thick curved eyebrows, small vertical oval black eyes, simple white face, friendly proportions, loose hoodie with zipper, loose trousers and sneakers. Match the original bold imperfect black ink contours and sparse diagonal gray hatching; do NOT redesign as a different person, anime, pixel art or 3D. BLACK WHITE AND GRAY ONLY, opaque white skin/clothing interiors with black outlines, no color. Single complete character, small safe padding, no labels, no lettering, no extra people, no background scenery, no glow, no opaque rectangle, no painted ground or cast shadow. TRUE TRANSPARENT alpha background. The body and activity must read clearly at about 240px display height. Front three-quarter view.\nACTION: standing and looking out at distant scenery with a delighted curious expression, one hand lifted above eyebrows to shade eyes and other hand relaxed by side. Whole body, feet visible. No scenery, no railing, no binoculars, no waving gesture."
+    },
+    {
+      "id": "study",
+      "prompt": "Create a production-ready isolated 2D action illustration for the Korean web game Busangi. The supplied image is CHARACTER IDENTITY AND DRAWING STYLE reference: preserve this exact young boy's messy black fringe hair, thick curved eyebrows, small vertical oval black eyes, simple white face, friendly proportions, loose hoodie with zipper, loose trousers and sneakers. Match the original bold imperfect black ink contours and sparse diagonal gray hatching; do NOT redesign as a different person, anime, pixel art or 3D. BLACK WHITE AND GRAY ONLY, opaque white skin/clothing interiors with black outlines, no color. Single complete character, small safe padding, no labels, no lettering, no extra people, no background scenery, no glow, no opaque rectangle, no painted ground or cast shadow. TRUE TRANSPARENT alpha background. The body and activity must read clearly at about 240px display height. Front three-quarter view.\nACTION: sitting at a compact study desk, concentrating on an open book, pencil in one hand, other hand gently supporting cheek. Small stack of two closed books, simple chair, complete body including feet. Friendly focused expression. No classroom or room background."
+    },
+    {
+      "id": "rest",
+      "prompt": "Create a production-ready isolated 2D action illustration for the Korean web game Busangi. The supplied image is CHARACTER IDENTITY AND DRAWING STYLE reference: preserve this exact young boy's messy black fringe hair, thick curved eyebrows, small vertical oval black eyes, simple white face, friendly proportions, loose hoodie with zipper, loose trousers and sneakers. Match the original bold imperfect black ink contours and sparse diagonal gray hatching; do NOT redesign as a different person, anime, pixel art or 3D. BLACK WHITE AND GRAY ONLY, opaque white skin/clothing interiors with black outlines, no color. Single complete character, small safe padding, no labels, no lettering, no extra people, no background scenery, no glow, no opaque rectangle, no painted ground or cast shadow. TRUE TRANSPARENT alpha background. The body and activity must read clearly at about 240px display height. Front three-quarter view.\nACTION: resting on a simple park bench with closed eyes and a small relaxed smile, leaning back, hands resting on lap, feet relaxed in front. Complete monochrome bench and full boy visible. No scenery, no sleeping symbols, no lettering."
+    },
+    {
+      "id": "pc",
+      "prompt": "ACTION: happily gaming at a compact PC cafe desk, both hands using keyboard and mouse, simple monitor showing blank screen, sitting on a simple gaming chair, complete boy including feet. Monitor seen in side three-quarter angle so face remains visible. No room background, no lettering or game logos.",
+      "referenceNote": "기존 부산기 원화를 참조 이미지로 제공"
+    },
+    {
+      "id": "karaoke",
+      "prompt": "ACTION: standing with feet apart singing into a handheld microphone near his mouth, cheerful open mouth and one free hand raised expressively. Whole body. No microphone wire, no musical-note symbols, no stage background, no letters.",
+      "referenceNote": "기존 부산기 원화를 참조 이미지로 제공"
+    },
+    {
+      "id": "movie",
+      "prompt": "ACTION: seated in a single simple cinema seat, holding a small popcorn tub in lap and one popcorn near mouth, eyes looking slightly upward at an unseen movie screen, happy engrossed expression. Complete seat, boy and feet. No room background, no film screen, no symbols.",
+      "referenceNote": "기존 부산기 원화를 참조 이미지로 제공"
+    },
+    {
+      "id": "park",
+      "prompt": "ACTION: joyfully riding a single compact roller-coaster seat with its safety lap bar visible, both hands raised, smiling with delighted open eyes. Include only the small ride seat and full seated character with feet, no tracks, no amusement-park scenery, no other people, no motion lines or symbols.",
+      "referenceNote": "기존 부산기 원화를 참조 이미지로 제공"
+    }
+  ],
+  "refinement": {
+    "tool": "built-in image_gen",
+    "targets": [
+      "pc",
+      "park",
+      "karaoke"
+    ],
+    "outputs": [
+      "busangi-pc-clean.png",
+      "busangi-park-clean.png",
+      "busangi-karaoke-clean.png"
+    ],
+    "instructions": "배경 잔상·체커보드·회색 매트 제거, 얼굴과 옷의 흰 부분 불투명하게 보정. 기존 자세·소품·그림체 유지. 투명 PNG 출력."
+  }
+}

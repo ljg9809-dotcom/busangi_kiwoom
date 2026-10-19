@@ -1,0 +1,17 @@
+{
+  "tool": "built-in image_gen",
+  "edits": [
+    {
+      "id": "pc",
+      "prompt": "Precise edit of supplied game sprite atlas. Preserve its EXACT 3x3 grid, canvas dimensions, all nine character poses, all outlines, all props, all transparency, all other colors and every other cell. ONLY change the blue trousers in ROW 1 COLUMN 3 (the boy wearing the purple crewneck sweatshirt in the upper right cell) to opaque white trousers with the same black outlines and gray hatching. The purple sweatshirt must stay purple. Keep row 2 column 3 blue matching set and row 3 column 2 blue trousers untouched. No other edits. Transparent background preserved.",
+      "source": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-321f9660-4a44-4a28-8417-84f96a5ca7df.png",
+      "path": "assets/wardrobe/atlases/pc-v2.png"
+    },
+    {
+      "id": "view",
+      "prompt": "Precise edit of supplied transparent game sprite atlas. Preserve EXACT 3 columns by 3 rows grid, canvas dimensions, all 9 characters, poses, props, colors and transparency. ONLY fix ROW 2 COLUMN 2 (middle cell): boy wears lavender zip jacket. His raised arm on viewer right wrongly has a short sleeve. Extend that lavender jacket sleeve along his raised arm to the wrist, preserving his hand shading his eyes and the bent elbow pose. Both jacket sleeves must be long. Keep all other cells and everything else unchanged. Transparent background preserved.",
+      "source": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-ff1c163b-38a9-407f-a4dd-88eec2637460.png",
+      "path": "assets/wardrobe/atlases/view-v2.png"
+    }
+  ]
+}

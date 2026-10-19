@@ -1,0 +1,90 @@
+{
+  "tool": "built-in image_gen",
+  "styleReference": "assets/busangi-character.png",
+  "assets": [
+    {
+      "id": "station",
+      "reference": "배경이미지 asset/부산역.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Busan Station plaza, preserve station facade, sweeping curved roof and blue towers; leave clean plaza paving in foreground. Main facade and station silhouette recognizable. Avoid exact logo lettering.",
+      "output": "assets/backgrounds/station.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-fc16a1aa-c890-4a13-a8b2-95e28b24b809.png"
+    },
+    {
+      "id": "gwangalli",
+      "reference": "배경이미지 asset/광안리 카페.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Interior of a Gwangalli cafe with a wide window looking onto Gwangandaegyo Bridge and blue sea; warm pendant lamp near upper left. Foreground bottom area has clear cafe floor and NO chairs or table in center or right; character with own stool/table will be composited there. Preserve bridge as most important recognizable landmark.",
+      "output": "assets/backgrounds/gwangalli.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-7b91a315-6e4f-4c6c-9ef4-5c15a3339b3e.png"
+    },
+    {
+      "id": "haeundae",
+      "reference": "배경이미지 asset/해운대.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Haeundae beach with blue sky and turquoise sea, preserve red HAEUNDAE sculpture toward far left or midground; wide clean sandy foreground, no people. The sculpture may be simplified and not perfectly lettered.",
+      "output": "assets/backgrounds/haeundae.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-bdbbd6a3-566f-4768-b131-70d669e3feaa.png"
+    },
+    {
+      "id": "gamcheon",
+      "reference": "배경이미지 asset/감천문마.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Gamcheon Culture Village cafe window looking toward colorful pastel hillside houses. Preserve wide window, pendant lights and clustered houses; remove the table and chairs and tiny decorations in foreground to leave open cafe floor for character props.",
+      "output": "assets/backgrounds/gamcheon.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-b41ef5aa-7044-4385-9452-bc6d70328927.png"
+    },
+    {
+      "id": "songdo",
+      "reference": "배경이미지 asset/송도.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Songdo sandy beach, calm sea, distant cable-car gondolas stretching over the water and coastal hill. Clear sandy foreground, preserve shoreline and cable car as recognizable landmarks.",
+      "output": "assets/backgrounds/songdo.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-3584174f-995e-4b85-886a-be9b7954cc05.png"
+    },
+    {
+      "id": "huinnyeoul",
+      "reference": "배경이미지 asset/흰여울.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Huinnyeoul Culture Village seaside cafe terrace, white buildings and cream parasols, terracotta floor and sea to left. Preserve lovely cafe terrace viewpoint; remove center-right chairs and tables, leave clear foreground floor for character with own stool/table. No signage.",
+      "output": "assets/backgrounds/huinnyeoul.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-7a03f4fd-331c-44c8-b49e-dc799f2422fd.png"
+    },
+    {
+      "id": "nampo",
+      "reference": "배경이미지 asset/자갈치.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Jagalchi seafood market at blue-hour night, preserve colorful market umbrellas, low market stalls, fishing boats and harbor lights. No people, raw fish detail not needed. Open clear paved foreground at bottom for dining character and small table. Preserve night atmosphere without overly dark foreground.",
+      "output": "assets/backgrounds/nampo.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-66785c1c-3842-4413-a757-088bcc8a4e02.png"
+    },
+    {
+      "id": "dadaepo",
+      "reference": "배경이미지 asset/다대포.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Dadaepo sunset wetland boardwalk and water, brilliant warm orange sky. Preserve reed beds and wooden boardwalk across middle distance. Add clear broad wooden viewing deck foreground with no railing blocking the character. No watermark or signature.",
+      "output": "assets/backgrounds/dadaepo.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-f7491d72-9df0-4c10-b02e-45a45e00b626.png"
+    },
+    {
+      "id": "lotteworld",
+      "reference": "배경이미지 asset/부산 롯데월드.jpg",
+      "prompt": "Edit IMAGE 1, the supplied location photograph, into a NEW COLOR hand-drawn 2D webgame background in the linework style of IMAGE 2, the Busangi character reference. Keep the location's recognizable architecture, scenery, major shapes and color atmosphere; translate every photographic texture into simple flat colored illustration with thick slightly irregular dark ink outlines, restrained gray hatching and charming clean Korean character-comic style. NOT a photo with a filter, NOT photorealistic, NOT 3D or pixel art. Wide horizontal landscape 16:9 composition for a game banner. No characters, no people, no UI, no frames, no typography except simplified landmark sculpture when requested, no watermark, no signature. Preserve a calm spacious usable foreground at bottom 30% so a separate opaque black-and-white character cutout can be layered on top. Full bleed. Image 2 is ONLY style reference; never include the boy in the background.Busan amusement park with sweeping orange-red roller coaster track and a distant coaster train, pale sky and green landscaping. Preserve dramatic track curves and cheerful amusement park mood. Clear paved viewing area in foreground for small ride-seat character. No real people or branding.",
+      "output": "assets/backgrounds/lotteworld.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-fb7c2dcb-bbd6-4874-85a2-bd956ea9baf2.png"
+    },
+    {
+      "id": "pc-room",
+      "reference": "배경이미지 asset/pc방.jpg",
+      "prompt": "Edit IMAGE 1 location photograph into a NEW full color hand-drawn 2D webgame background. IMAGE 2 is a linework/style reference only, the original Busangi boy: translate photography into clean flat colored illustration, thick slightly irregular black ink outlines, simple restrained hatching, charming Korean character comic style. Not photorealistic, not photo filter, not 3D, not pixel art. Wide horizontal landscape 16:9 banner. No people, no characters, no UI, no logos, no readable text, no watermarks. Calm open usable foreground at bottom 30%. Never include the boy in background. Preserve recognizable room layout and lighting of photo. Korean PC gaming cafe with rows of monitors, purple and green LED ambient glow. Reserve a clear floor area in foreground right; background computers further back, since a separate character seated at his own desk will be overlaid.",
+      "output": "assets/backgrounds/pc-room.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-413cd997-04e4-4440-9e94-56a077df7694.png"
+    },
+    {
+      "id": "cinema",
+      "reference": "배경이미지 asset/영화관.jpg",
+      "prompt": "Edit IMAGE 1 location photograph into a NEW full color hand-drawn 2D webgame background. IMAGE 2 is a linework/style reference only, the original Busangi boy: translate photography into clean flat colored illustration, thick slightly irregular black ink outlines, simple restrained hatching, charming Korean character comic style. Not photorealistic, not photo filter, not 3D, not pixel art. Wide horizontal landscape 16:9 banner. No people, no characters, no UI, no logos, no readable text, no watermarks. Calm open usable foreground at bottom 30%. Never include the boy in background. Preserve recognizable room layout and lighting of photo. Cinema auditorium, rows of rich red upholstered seats viewed from front at slight angle. Keep far right foreground floor clear for separate seated cartoon boy holding popcorn, so no overlapping duplicate chair in that reserved space. No food or drinks in this background.",
+      "output": "assets/backgrounds/cinema.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-6f7222b0-f497-4ab2-b45e-996045109210.png"
+    },
+    {
+      "id": "karaoke-room",
+      "reference": "배경이미지 asset/노래방.jpg",
+      "prompt": "Edit IMAGE 1 location photograph into a NEW full color hand-drawn 2D webgame background. IMAGE 2 is a linework/style reference only, the original Busangi boy: translate photography into clean flat colored illustration, thick slightly irregular black ink outlines, simple restrained hatching, charming Korean character comic style. Not photorealistic, not photo filter, not 3D, not pixel art. Wide horizontal landscape 16:9 banner. No people, no characters, no UI, no logos, no readable text, no watermarks. Calm open usable foreground at bottom 30%. Never include the boy in background. Preserve recognizable room layout and lighting of photo. Private Korean karaoke room, purple-blue disco light, wall monitor, corner sofa and low table on left and rear. Clear right foreground floor for separate boy singing into microphone.",
+      "output": "assets/backgrounds/karaoke-room.png",
+      "generated": "C:\\Users\\user\\.codex\\generated_images\\01a151cd-1679-7351-8ee1-943edbdcf8a1\\exec-334c07da-fc2f-4e5c-9a2d-5743cb6fbed8.png"
+    }
+  ]
+}

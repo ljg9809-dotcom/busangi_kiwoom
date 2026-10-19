@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>부산기 행동 이미지 9종</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f3f3f0;padding:28px}main{display:block;max-width:1040px;margin:auto;padding:0}
+h1{font-family:var(--hand);font-size:35px;margin-bottom:6px}.intro{font-size:13px;color:#666}
+.action-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+figure{margin:0;background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px}
+figure img{width:100%;height:210px;object-fit:contain}figcaption{font-size:13px;font-weight:bold}
+@media(max-width:550px){body{padding:18px}.action-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}figure img{height:170px}}
+.compact{padding:12px}.compact h1{font-size:20px;padding-right:85px}.compact .intro{font-size:10px;margin-bottom:8px}
+.compact .action-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.compact figure{padding:6px;gap:2px}.compact figure img{height:clamp(50px,calc((100svh - 190px)/3),180px)}
+.compact figcaption{font-size:11px}#compact-toggle{font-size:11px;padding:6px 12px;margin-bottom:12px}
+.compact #compact-toggle{position:fixed;right:12px;top:9px;padding:4px 10px;z-index:2}
+</style></head><body><main><h1>오늘도, 부산기는 바쁘다.</h1><p class="intro">부산기 원화를 참고한 투명 배경 행동 PNG 9종 · 배경은 별도 레이어로 연결</p>
+<button type="button" id="compact-toggle">한 화면에 모아 보기</button>
+<div class="action-gallery">
+<figure><img src="assets/actions/busangi-eat.png" alt="밥 먹는 부산기"><figcaption>밥 먹기</figcaption></figure>
+<figure><img src="assets/actions/busangi-drink.png" alt="음료 마시는 부산기"><figcaption>음료 마시기</figcaption></figure>
+<figure><img src="assets/actions/busangi-view.png" alt="경치를 구경하는 부산기"><figcaption>경치 구경</figcaption></figure>
+<figure><img src="assets/actions/busangi-study.png" alt="공부하는 부산기"><figcaption>공부</figcaption></figure>
+<figure><img src="assets/actions/busangi-rest.png" alt="쉬는 부산기"><figcaption>휴식</figcaption></figure>
+<figure><img src="assets/actions/busangi-pc-clean.png" alt="게임하는 부산기"><figcaption>PC방</figcaption></figure>
+<figure><img src="assets/actions/busangi-karaoke-clean.png" alt="노래하는 부산기"><figcaption>노래방</figcaption></figure>
+<figure><img src="assets/actions/busangi-movie.png" alt="영화를 보는 부산기"><figcaption>영화 감상</figcaption></figure>
+<figure><img src="assets/actions/busangi-park-clean.png" alt="놀이기구 타는 부산기"><figcaption>놀이공원</figcaption></figure>
+</div><p><a href="index.html">게임으로 돌아가기</a></p></main>
+<script>document.getElementById('compact-toggle').addEventListener('click',function(){const compact=document.body.classList.toggle('compact');this.textContent=compact?'크게 보기':'한 화면에 모아 보기';});</script>
+</body></html>

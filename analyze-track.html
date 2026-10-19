@@ -1,0 +1,3 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>음원 채보 준비</title>
+<h1>음원 파형 분석</h1><pre id="output">분석 중</pre><script src="cafe-rhythm.js"></script>
+<script>fetch('assets/verdi-dies-irae.ogg').then(r=>r.arrayBuffer()).then(BusangiCafe.analyze).then(chart=>{document.getElementById('output').textContent=JSON.stringify(chart);}).catch(e=>{document.getElementById('output').textContent='ERROR: '+e.message;});</script></html>
