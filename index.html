@@ -9,21 +9,21 @@
   <link rel="stylesheet" href="style.css">
   <script src="busangi-game.js" defer></script>
   <script src="construction-scene.js" defer></script>
-  <script src="cafe-rhythm.js" defer></script>
-  <script src="cafe-track.js" defer></script>
   <script src="cafe-controller.js" defer></script>
   <script src="scene-assets.js" defer></script>
   <script src="market-client.js" defer></script>
   <script src="wardrobe-renderer.js" defer></script>
   <script src="assets/stocks/directory.js" defer></script>
   <script src="stock-search.js" defer></script>
+  <script src="account-response.js" defer></script>
   <script src="account-client.js" defer></script>
   <script src="station-controller.js" defer></script>
+  <script src="ranking-client.js" defer></script>
   <script src="busangi-ui.js" defer></script>
 </head>
 <body class="intro-active">
   <section id="intro-screen" class="intro-screen" aria-labelledby="intro-title">
-    <p class="intro-eyebrow">나만의 속도로, 나만의 부산.</p>
+    <p class="intro-eyebrow">나만의 속도로, 나만의 부산 키우기</p>
     <h1 id="intro-title" class="intro-title" aria-label="부산기 키우기">
       <img class="intro-logo" src="assets/busangi-logo.png" alt="부산기" width="1983" height="793">
       <span class="intro-title-text" aria-hidden="true">키우기</span>
@@ -45,10 +45,10 @@
       <button type="button" data-page="work">아르바이트·취업</button>
       <button type="button" data-page="map">부산 여행</button>
       <button type="button" data-page="study">독서실</button>
-      <button type="button" data-page="closet">옷장</button>
       <button type="button" data-page="assets">자산</button>
       <button type="button" data-page="stocks">주식</button>
       <button type="button" data-page="station">부산역 광장</button>
+      <button type="button" data-page="ranking">RANKIING</button>
     </nav>
   </header>
 
@@ -72,19 +72,27 @@
       <figure class="scene" data-location="station" data-activity="plaza" data-action="idle">
         <div class="scene-background" id="scene-background"><p id="background-status">부산역 배경 일러스트 준비 중</p></div>
         <span id="scene-action-label" class="scene-action-label">부산에서 보내는 하루</span>
-        <img id="scene-character" class="character" src="assets/busangi-character.png" alt="인사하는 부산기 원화" width="300" decoding="async">
+        <img id="scene-character" class="character" src="assets/busangi-standing.png" alt="편안하게 서 있는 부산기" width="300" decoding="async">
         <figcaption><strong id="scene-place">부산역</strong> <span id="scene-description">부산 여행과 만남의 출발점</span></figcaption>
       </figure>
-      <p id="outfit-summary">현재 의상: 기본 부산기</p>
-      <p class="prototype-note">장소·행동·착용한 옷에 따라 장면이 바뀌어. 집·독서실 배경은 준비 중이야.</p>
       </div></div>
-      <div class="quick-actions">
-        <button type="button" data-page="work">아르바이트하러 가기</button>
-        <button type="button" data-page="map">부산에서 밥 먹기</button>
-        <button type="button" data-page="study">공부 시작하러 가기</button>
+    <details id="wardrobe-panel">
+      <summary id="closet-title">옷장</summary>
+      <div class="wardrobe-content"><p>새 옷을 사면 정신력이 회복되고, 옷장에 영구 보관돼.</p>
+      <p>굿즈 컬렉션부터 나만의 코디까지. 구매한 옷은 밥 먹기·카페·휴식 등 모든 배너 행동에 반영돼. 재킷은 상의 위에, 신발·모자·바지는 따로 착용할 수 있어.</p>
+      <p id="closet-preview-status" aria-live="polite">현재 착용한 옷을 보고 있어.</p>
+      <button type="button" id="closet-preview-reset" hidden>현재 착용으로 돌아가기</button>
+      <div id="clothing-list" class="card-grid"></div>
+      <h2>현재 착용</h2><ul id="equipped-list"></ul>
       </div>
+    </details>
+
       <article class="card"><h2>잠깐 쉬어가도 괜찮아</h2><p>무료 휴식은 1분마다 체력과 정신력을 각각 1 회복해. 이 화면을 열어둬야 해.</p><button type="button" id="rest-toggle">무료 휴식 시작</button></article>
-      <article class="card"><h2>쌓여 있는 자산 수익</h2><p>최대 24시간분까지 쌓여. 수령하면 다시 쌓이기 시작해.</p><output id="pending-income">0원</output> <button type="button" id="claim-income">수익 받기</button></article>
+      <article id="home-assets-card" class="card"><h2>총 자산</h2><p>보유 자산 + 주식 평가금액 + 보유 재화</p>
+        <output id="home-total-assets" class="home-total-assets">30,000원</output>
+        <dl class="home-assets-breakdown"><div><dt>보유 자산</dt><dd id="home-property-value">0원</dd></div><div><dt>주식 평가금액</dt><dd id="home-stock-value">0원</dd></div><div><dt>보유 재화</dt><dd id="home-cash-value">30,000원</dd></div></dl>
+        <p id="home-assets-status" role="status"></p><button type="button" id="home-assets-refresh">총 자산 새로고침</button>
+      </article>
       <article class="card"><h2>나의 부산 도감</h2><p id="collection-count">방문한 장소 1 / 9</p><ul id="collection-list"></ul></article>
     </section>
 
@@ -92,20 +100,20 @@
       <header class="section-header"><p>WORK & GROW</p><h1 id="work-title" tabindex="-1">오늘의 땀, 내일의 자산.</h1><p>손끝으로 일하고, 부산기의 첫 수입을 만들어봐.</p></header>
       <div class="job-grid">
         <article class="card"><h2>공사장 · 벽돌 운반</h2><p>안전모를 쓰고 벽돌을 메고 올라가자. 다음 계단이 같은 방향이면 올라가기, 반대면 방향 전환!</p><p>체력 −20 · 정신력 −15 / 기본 3,000원 + 계단당 500원</p><button type="button" id="start-construction">공사장 출근</button></article>
-        <article class="card"><h2>카페 · 음료 제조</h2><p>베르디 레퀴엠에 맞춰 음료를 만들어봐. 음악이 끝나면 게임도 종료되고 완주 보너스 10,000원을 받아!</p><p>체력 −15 · 정신력 −20 / 키보드 D · F · J · K 또는 레인 버튼</p><button type="button" id="start-cafe">카페 출근</button></article>
+        <article class="card"><h2>카페 · 음료 제조</h2><p>주문표 순서대로 재료를 눌러 음료를 만들어봐. 60초 근무를 마치면 보너스 10,000원!</p><p>체력 −15 · 정신력 −20 / 숫자키 1~4 또는 재료 버튼 터치</p><button type="button" id="start-cafe">카페 출근</button></article>
       </div>
-      <details class="cafe-music-settings"><summary>카페 배경음악 · 음원 바꾸기</summary>
-        <p id="cafe-track-status">베르디 레퀴엠 · 진노의 날</p>
-        <label for="cafe-file">내 음원 파일 선택 (MP3·OGG·WAV·M4A)</label>
-        <input type="file" id="cafe-file" accept="audio/*"><button type="button" id="cafe-default-track">기본 레퀴엠으로</button>
-        <p>선택한 파일은 이 기기에서만 분석해. 자동 채보는 연주 박자와 차이가 있을 수 있어.</p>
-        <p id="default-music-credit">음원: Verdi · Messa da requiem, Dies irae / ICBSA 제공 · La voce del padrone 녹음. <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg" target="_blank" rel="noopener noreferrer">출처·연주 정보</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> · 음원 수정 없음.</p>
-      </details>
-      <audio id="cafe-audio" preload="metadata" src="assets/verdi-dies-irae.ogg"></audio>
       <section id="minigame-area" class="card" aria-labelledby="minigame-title" hidden>
         <h2 id="minigame-title" tabindex="-1">아르바이트 진행 중</h2>
         <p id="game-status"></p>
+        <div id="cafe-order-panel" hidden>
+          <div class="cafe-metrics"><span>남은 시간 <strong id="cafe-time">60초</strong></span><span>완성 <strong id="cafe-count">0잔</strong></span><span>연속 <strong id="cafe-combo">0</strong></span></div>
+          <p class="cafe-order-label">ORDER / 지금 들어온 주문</p>
+          <h3 id="cafe-order-name"></h3>
+          <ol id="cafe-recipe" aria-label="재료를 넣는 순서"></ol>
+          <p id="cafe-feedback" role="status" aria-live="polite">주문표 순서대로 재료를 눌러줘!</p>
+        </div>
         <div class="minigame-stage">
+          <img id="cafe-scene" src="assets/cafe-barista.png" alt="카페 앞치마를 입고 바닷가 카페에서 음료를 만드는 부산기" hidden>
           <canvas id="game-canvas" width="720" height="320" role="img" aria-label="공사장 배경에서 안전모와 벽돌 지게를 멘 부산기가 계단을 오르는 게임">게임 화면을 표시할 수 없습니다. 조작 버튼을 사용해주세요.</canvas>
           <div id="construction-result" class="construction-result" hidden>
             <p id="construction-result-reason">근무 완료!</p><h3 id="construction-result-height">0계단 도착</h3>
@@ -116,9 +124,13 @@
           <button type="button" data-stair="turn" aria-label="방향 전환, 스페이스 키"><span class="control-symbol" aria-hidden="true">↶</span><span>방향 전환</span><small>SPACE</small></button>
           <button type="button" data-stair="up" aria-label="올라가기, 위쪽 화살표 키"><span class="control-symbol" aria-hidden="true">↑</span><span>올라가기</span><small>↑ 방향키</small></button>
         </div>
-        <div id="cafe-controls" hidden><button type="button" data-lane="0" aria-label="레인 1 D">D<small>원두</small></button><button type="button" data-lane="1" aria-label="레인 2 F">F<small>우유</small></button><button type="button" data-lane="2" aria-label="레인 3 J">J<small>시럽</small></button><button type="button" data-lane="3" aria-label="레인 4 K">K<small>완성</small></button></div>
+        <div id="cafe-controls" hidden>
+          <button type="button" data-ingredient="0"><kbd>1</kbd><span aria-hidden="true">🧊</span>얼음</button>
+          <button type="button" data-ingredient="1"><kbd>2</kbd><span aria-hidden="true">☕</span>커피</button>
+          <button type="button" data-ingredient="2"><kbd>3</kbd><span aria-hidden="true">🥛</span>우유</button>
+          <button type="button" data-ingredient="3"><kbd>4</kbd><span aria-hidden="true">🍯</span>바닐라</button>
+        </div>
         <button type="button" id="cafe-pause" hidden>일시정지</button>
-        <label id="cafe-volume-label" for="cafe-volume" hidden>음량 <input type="range" id="cafe-volume" min="0" max="100" value="60"></label>
         <button type="button" id="finish-minigame">근무 마치고 정산</button>
         <button type="button" id="construction-exit" hidden>현장 나가기</button>
       </section>
@@ -126,6 +138,18 @@
       <h2>원하는 직장에 지원하기</h2><p>지능 조건을 달성하면 지원할 수 있어. 아래 급여는 시제품의 1분 근무 보상이야.</p>
       <div id="job-list" class="card-grid"></div>
       <article class="card"><h2>직장 근무</h2><p id="shift-status">먼저 원하는 직장에 지원해줘.</p><button type="button" id="start-shift">1회 근무 시작</button></article>
+    </section>
+
+    <section id="page-ranking" class="page" aria-labelledby="ranking-title" hidden>
+      <header class="section-header"><p>RANKIING</p><h1 id="ranking-title" tabindex="-1">함께 키우는 부산, 지금의 순위.</h1><p>직장 점수에 총자산 점수를 더해, 나의 성장을 확인해봐.</p></header>
+      <div class="card ranking-rules"><h2>점수는 이렇게 계산해</h2><p><strong>총점 = 현재 직장 점수 + 총자산 1만원당 1점</strong> · 1만원 미만은 버림</p>
+      <p>중소기업 1,000점 → 중견기업 2,000점 → 공무원 3,000점 → 공기업 4,000점 → 대기업 5,000점 · 미취업 0점</p>
+      <p>총자산 = 보유 자산 지분 가치 + 보유 주식 평가금액(조회 시세 × 수량) + 보유 재화. 의상과 아직 수령하지 않은 수익은 제외해.</p>
+      <p>가입한 회원의 마지막 서버 저장 기록을 기준으로 집계해. 이직해도 직장 점수는 누적되지 않고, 같은 총점은 공동 순위야.</p></div>
+      <p id="ranking-me" class="card">로그인하면 내 순위도 함께 확인할 수 있어.</p>
+      <div class="ranking-toolbar"><p id="ranking-status" role="status" aria-live="polite"></p><button type="button" id="ranking-refresh">새로고침</button></div>
+      <div class="ranking-table-wrap"><table class="ranking-table"><caption>회원 성장 랭킹</caption><thead><tr><th scope="col">순위</th><th scope="col">닉네임</th><th scope="col">현재 직장</th><th scope="col">직장 점수</th><th scope="col">총자산</th><th scope="col">총자산 점수</th><th scope="col">총점</th></tr></thead><tbody id="ranking-rows"></tbody></table></div>
+      <div class="ranking-toolbar"><button type="button" id="ranking-prev">이전</button><span id="ranking-page">1 / 1</span><button type="button" id="ranking-next">다음</button></div>
     </section>
 
     <section id="page-map" class="page" aria-labelledby="map-title" hidden>
@@ -146,18 +170,9 @@
       <button type="button" data-page="work">취업 조건 보러 가기</button>
     </section>
 
-    <section id="page-closet" class="page" aria-labelledby="closet-title" hidden>
-      <header class="section-header"><p>MY WARDROBE</p><h1 id="closet-title" tabindex="-1">흑백 부산기에 나만의 컬러.</h1><p>새 옷을 사면 정신력이 회복되고, 옷장에 영구 보관돼.</p></header>
-      <p>굿즈 컬렉션부터 나만의 코디까지. 구매한 옷은 밥 먹기·카페·휴식 등 모든 배너 행동에 반영돼. 재킷은 상의 위에, 신발·모자·바지는 따로 착용할 수 있어.</p>
-      <div id="scene-closet-host"></div>
-      <p id="closet-preview-status" aria-live="polite">현재 착용한 옷을 보고 있어.</p>
-      <button type="button" id="closet-preview-reset" hidden>현재 착용으로 돌아가기</button>
-      <div id="clothing-list" class="card-grid"></div>
-      <h2>현재 착용</h2><ul id="equipped-list"></ul>
-    </section>
-
     <section id="page-assets" class="page" aria-labelledby="assets-title" hidden>
       <header class="section-header"><p>BUILD YOUR FUTURE</p><h1 id="assets-title" tabindex="-1">작은 지분부터, 부산의 자산가까지.</h1><p>집·건물·기업·관광시설은 1%씩, 자동차는 한 대씩 구매할 수 있어.</p></header>
+      <article class="card"><h2>쌓여 있는 자산 수익</h2><p>최대 24시간분까지 쌓여. 수령하면 다시 쌓이기 시작해.</p><output id="pending-income">0원</output> <button type="button" id="claim-income">수익 받기</button></article>
       <dl><div><dt>총자산</dt><dd id="total-assets">30,000원</dd></div><div><dt>구매한 자산 평가액</dt><dd id="owned-value">0원</dd></div></dl>
       <label for="asset-filter">자산 종류</label><select id="asset-filter"><option value="all">전체</option><option value="car">자동차</option><option value="house">집</option><option value="building">상가·건물</option><option value="tourism">관광시설</option><option value="company">기업</option></select>
       <p>표시 가격과 수익은 게임 고정값이야. 관광시설은 실제 장소를 모티브로 한 가상 시설이야.</p>
@@ -188,9 +203,26 @@
       <form id="chat-form"><label for="chat-input">메시지</label><input id="chat-input" maxlength="200" placeholder="서버 연결 후 이용할 수 있어요" disabled required><button type="submit" id="chat-send" disabled>보내기</button></form>
     </section>
   </main>
-  <footer><p>부산기 키우기 · 나만의 속도로, 나만의 부산.</p><p>진행 상황은 이 브라우저에 저장됩니다. 브라우저 데이터 삭제 시 기록도 삭제될 수 있습니다.</p></footer>
+  <footer><p>부산기 키우기 · 나만의 속도로, 나만의 부산 키우기</p><p>진행 상황은 이 브라우저에 저장됩니다. 브라우저 데이터 삭제 시 기록도 삭제될 수 있습니다.</p></footer>
   </div>
   <button type="button" id="account-open">회원가입 / 로그인</button>
-  <dialog id="account-dialog" aria-labelledby="account-title"><h2 id="account-title">부산기 계정</h2><p id="account-state" aria-live="polite">계정 연결 확인 중…</p><div id="account-auth-fields"><label for="account-nickname">사용할 닉네임</label><input id="account-nickname" maxlength="80" autocomplete="username" placeholder="한글·영문·숫자·기호 모두 가능"><label for="account-password">비밀번호</label><input id="account-password" type="password" minlength="8" maxlength="256" autocomplete="current-password" placeholder="8자 이상"><label class="account-import-label"><input type="checkbox" id="account-import" checked> 가입할 때 현재 브라우저의 진행 상황 가져오기</label><button id="account-register" type="button">회원가입</button><button id="account-login" type="button">로그인</button></div><button id="account-save-now" type="button">지금 저장</button><button id="account-logout" type="button" hidden>저장 후 로그아웃</button><button id="account-close" type="button">닫기</button><p class="prototype-note">비밀번호는 해시로 보관돼. 계정 복구용 이메일이 없으니 닉네임과 비밀번호를 기억해줘.</p></dialog>
+  <dialog id="account-dialog" aria-labelledby="account-title">
+    <button id="account-close" type="button" aria-label="계정 창 닫기">×</button>
+    <h2 id="account-title">부산기 계정</h2>
+    <p id="account-state" role="status" aria-live="polite">계정 연결 확인 중…</p>
+    <div id="account-auth-fields">
+      <div class="account-tabs" role="group" aria-label="계정 메뉴"><button id="account-login" type="button" aria-pressed="true">로그인</button><button id="account-register" type="button" aria-pressed="false">회원가입</button></div>
+      <form id="account-form">
+        <label for="account-nickname">닉네임</label><input id="account-nickname" maxlength="80" autocomplete="username" placeholder="한글·영문·숫자·기호 모두 가능" required>
+        <label for="account-password">비밀번호</label><input id="account-password" type="password" minlength="8" maxlength="256" autocomplete="current-password" placeholder="8자 이상" required aria-describedby="account-password-help">
+        <label class="account-import-label" id="account-import-row" hidden><input type="checkbox" id="account-import" checked> 현재 브라우저의 진행 상황 가져오기</label>
+        <button id="account-submit" class="account-primary" type="submit">로그인하기</button>
+      </form>
+    </div>
+    <button id="account-continue" class="account-primary" type="button" hidden>게임으로 돌아가기</button>
+    <button id="account-save-now" type="button" hidden>지금 저장</button>
+    <button id="account-logout" type="button" hidden>저장 후 로그아웃</button>
+    <p id="account-password-help" class="prototype-note">비밀번호는 다른 사람이 원래 내용을 알 수 없도록 안전하게 보관해. 계정 복구용 이메일을 받지 않으니 닉네임과 비밀번호를 기억해줘.</p>
+  </dialog>
 </body>
 </html>

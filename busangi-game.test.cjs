@@ -40,37 +40,41 @@ test('지분 수익·첫 매수 이전 시간 제외·24시간 상한·중복 �
   assert.equal(game.claimIncome(), 0); advance(HOUR); assert.equal(game.claimIncome(), 2000);
   assert.equal(game.portfolio().total, 2050000);
 });
-test('계단과 카페 판정·시간 종료·보상 중복 지급 방지', () => {
-  const {game, advance} = setup(); game.startMinigame('construction');
-  game.stair('up'); assert.equal(game.session.height, 1); advance(160); game.stair('turn');
-  assert.equal(game.state.lastResult.earned, 3500);
-  const cash = game.state.cash; game.finishMinigame(); assert.equal(game.state.cash, cash);
-  game.startMinigame('cafe',{durationMs:14000,notes:[{at:1500,lane:3},{at:2500,lane:3}]});
-  game.syncCafe(1500); assert.equal(game.hitNote(3), 'PERFECT');
-  game.syncCafe(2500); game.hitNote(3); game.finishMinigame();
-  assert.equal(game.session, null); assert.equal(game.state.lastResult.earned, 6200);
+test('계단 보상과 중복 정산 방지', () => {
+  const {game,advance}=setup();game.startMinigame('construction');
+  game.stair('up');advance(160);game.stair('turn');
+  assert.equal(game.state.lastResult.earned,3500);
+  const cash=game.state.cash;game.finishMinigame();assert.equal(game.state.cash,cash);
 });
-test('카페는 벽시계 대신 음원 위치로 판정하고, 완주 보너스는 종료 때 한 번만 지급',()=>{
-  const {game,advance}=setup();
-  game.startMinigame('cafe',{durationMs:3000,notes:[{at:1000,lane:0},{at:2000,lane:1}]});
-  advance(30000);assert.ok(game.session);
-  game.syncCafe(1000);assert.equal(game.hitNote(0),'PERFECT');
-  game.pauseCafe(true);game.syncCafe(2500);assert.equal(game.session.playbackMs,1000);
-  assert.equal(game.hitNote(1),'PAUSED');game.pauseCafe(false);
-  assert.throws(()=>game.finishMinigame('completed'));assert.ok(game.session);
-  game.syncCafe(2000);game.hitNote(1);game.syncCafe(3000);
-  const cash=game.state.cash,result=game.finishMinigame('completed');
-  assert.equal(result.bonus,10000);assert.equal(result.earned,16200);assert.equal(result.accuracy,100);
-  assert.equal(game.state.cash,cash+16200);game.finishMinigame('completed');assert.equal(game.state.cash,cash+16200);
+test('카페 주문 순서·자동 서빙·콤보와 잘못된 재료',()=>{
+  const {game,advance}=setup();game.startMinigame('cafe');
+  assert.equal(game.state.health,85);assert.equal(game.state.mental,80);
+  assert.throws(()=>game.addCafeIngredient(4));
+  for(const id of [...game.session.order.ingredients]){game.addCafeIngredient(id);advance(110);}
+  assert.equal(game.session.drinks,1);assert.equal(game.session.combo,1);assert.equal(game.session.score,1100);
+  const first=game.session.order.ingredients[0];game.addCafeIngredient(first);
+  assert.equal(game.addCafeIngredient(first),'WAIT');advance(110);
+  const wrong=(game.session.order.ingredients[game.session.progress]+1)%4;
+  assert.equal(game.addCafeIngredient(wrong),'WRONG');
+  assert.equal(game.session.progress,0);assert.equal(game.session.combo,0);assert.equal(game.session.mistakes,1);
+  const result=game.finishMinigame();assert.equal(result.bonus,0);assert.equal(result.earned,4100);
 });
-test('카페 중도 종료·지나간 노트·완주 조건 및 입력 데이터 검증',()=>{
-  const {game}=setup();
-  assert.throws(()=>game.startMinigame('cafe'));assert.equal(game.state.health,100);
-  game.startMinigame('cafe',{durationMs:3000,notes:[{at:1000,lane:0},{at:2000,lane:1}]});
-  game.syncCafe(1500);assert.equal(game.session.misses,1);game.syncCafe(1500);assert.equal(game.session.misses,1);
-  assert.throws(()=>game.syncCafe(1000));
-  const result=game.finishMinigame();assert.equal(result.bonus,0);assert.equal(result.completed,false);
+test('카페 60초 종료·일시정지·완료 보너스 1회 지급',()=>{
+  const {game,advance}=setup();game.startMinigame('cafe');advance(10000);
+  game.pauseCafe(true);advance(120000);assert.equal(game.session.remainingMs,50000);
+  assert.equal(game.addCafeIngredient(0),'PAUSED');
+  assert.throws(()=>game.finishMinigame('completed'));
+  game.pauseCafe(false);advance(49999);assert.ok(game.session);
+  const cash=game.state.cash;advance(1);assert.equal(game.session,null);
+  assert.equal(game.state.lastResult.bonus,10000);assert.equal(game.state.cash,cash+13000);
+  game.finishMinigame();advance(10000);assert.equal(game.state.cash,cash+13000);
 });
+test('종료 시각 이후 재료 입력으로 보상 추가 불가',()=>{
+  let time=0;const game=api.create({storage:null,now:()=>time});game.startMinigame('cafe');
+  time=60000;assert.equal(game.addCafeIngredient(0),undefined);
+  assert.equal(game.state.lastResult.drinks,0);assert.equal(game.state.lastResult.earned,13000);
+});
+
 test('미리 보이는 계단과 판정 일치·경로 범위·이동 중 중복 입력 방지', () => {
   const {game, advance} = setup(); game.startMinigame('construction');
   for (let i = 0; i < 30; i++) {

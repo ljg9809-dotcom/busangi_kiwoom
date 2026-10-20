@@ -14,7 +14,7 @@
       async function connectMarket(){
         if(marketConnecting)return;
         marketConnecting=true;marketMessage='한국투자증권 시세 서버 연결 중…';game.emit();
-        try {game.market=await BusangiMarket.connect();marketMessage='한국투자증권 현재가 연결됨 · 조회·주문 시 갱신 · 게임머니 거래';}
+        try {game.market=await BusangiMarket.connect();marketMessage='한국투자증권 현재가 연결됨 · 조회·주문 시 갱신 · 게임머니 거래';if(Object.keys(game.state.stocks).length)await game.refreshPortfolio();}
         catch(error){game.market=null;marketMessage=error.message;}
         finally{marketConnecting=false;game.emit();}
       }
@@ -25,7 +25,7 @@
       const activityNames = {plaza:'광장', meal:'밥 먹기', cafe:'음료 마시기', view:'경치 구경', leisure:'여가생활'};
       const assetNames = {car:'자동차', house:'집', building:'상가·건물', tourism:'관광시설', company:'기업'};
       let state = game.snapshot(), page = 'home', lastResult = JSON.stringify(game.state.lastResult), lastPlace = '', stationSession = null;
-      let activeConstruction = false, activeCafe = false,previewClothing=null;
+      let activeConstruction = false, activeCafe = false,previewClothing=null,mapActivity='view';
       // 추후 시세·멀티플레이 어댑터를 연결할 때 사용할 진입점.
       window.busangiApp = game;
       const run = async action => { try { return await action(); } catch (error) { notify(error.message); return undefined; } };
@@ -33,14 +33,18 @@
       const button = (text, action) => { const el = element('button', text); el.type = 'button'; el.addEventListener('click', () => run(action)); return el; };
       const card = (parent, title, description) => { const el = element('article', '', 'card'); el.append(element('h3', title), element('p', description)); $(parent).append(el); return el; };
       function navigate(target, focus = true) {
+        if(target==='closet')target='home';
+        if(target==='map'){mapActivity='view';game.visit('station','plaza');}
         if (!$('page-' + target)) target = 'home'; page = target;
-        if(target!=='closet'&&previewClothing){previewClothing=null;game.emit();}
+        if(target!=='home'&&previewClothing){previewClothing=null;game.emit();}
         document.querySelectorAll('.page').forEach(el => { el.hidden = el.id !== 'page-' + target; });
         document.querySelectorAll('.main-nav [data-page]').forEach(el => { if (el.dataset.page === target) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current'); });
         history.replaceState(null, '', '#' + target);
         const sceneHost=$('scene-'+target+'-host')||$('scene-home-host');
         sceneHost.append($('scene-panel'));
         stationController.setActive(target==='station');
+        if(target==='ranking')BusangiRanking.load(1);
+        render(game.snapshot());
         if (focus) $('page-' + target).querySelector('h1').focus();
       }
       document.querySelectorAll('[data-page]').forEach(el => el.addEventListener('click', event => { event.preventDefault(); navigate(el.dataset.page); }));
@@ -50,7 +54,7 @@
         thumbnail.src=BusangiScenes.backgrounds[place.id].default;thumbnail.alt=place.name+' 배경 일러스트';thumbnail.loading='lazy';thumbnail.width=640;thumbnail.height=360;
         el.prepend(thumbnail);
         el.append(button('이곳으로 이동', () => {
-          game.visit(place.id); notify(place.name + '에 도착했어!');
+          mapActivity='view';game.visit(place.id); notify(place.name + '에 도착했어!');
           document.querySelector('.scene').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
         }));
       });
@@ -58,7 +62,7 @@
         const el = card(item.activity === 'leisure' ? 'leisure-list' : 'food-list', item.name,
           won(item.price) + ' · ' + (item.stat === 'health' ? '체력' : '정신력') + ' +' + item.recovery);
         const buy = button('구매·이용', () => {
-          const recovered = game.consume(item.id); notify(item.name + ' 이용 완료! 실제 회복 +' + recovered);
+          mapActivity=null;const recovered = game.consume(item.id); notify(item.name + ' 이용 완료! 실제 회복 +' + recovered);
           document.querySelector('.scene').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
         });
         buy.dataset.item = item.id; el.append(buy);
@@ -68,7 +72,7 @@
         el.dataset.wardrobeItem=item.id;
         const icon=element('div','','clothing-icon');icon.setAttribute('role','img');icon.setAttribute('aria-label',item.name+' 그림');
         icon.style.backgroundImage='url('+JSON.stringify(item.image)+')';icon.style.backgroundPosition=(item.frame%3)*50+'% '+Math.floor(item.frame/3)*50+'%';el.prepend(icon);
-        const preview=button('미리 입어보기',()=>{previewClothing=item.id;game.emit();$('scene-closet-host').scrollIntoView({behavior:'smooth',block:'start'});});
+        const preview=button('미리 입어보기',()=>{previewClothing=item.id;game.emit();$('scene-home-host').scrollIntoView({behavior:'smooth',block:'start'});});
         const buy = button('구매하기', () => { previewClothing=null;game.buyClothing(item.id); notify(item.name + ' 구매·착용 완료!'); }); buy.dataset.clothing = item.id;
         const equip = button('착용하기', () => { previewClothing=null;game.equip(item.id); notify(item.name + ' 착용 완료!'); }); equip.dataset.equip = item.id;
         el.append(preview,buy,equip);
@@ -116,13 +120,13 @@
         render(game.snapshot()); $(cafe ? 'start-cafe' : 'start-construction').focus();
       }));
       document.querySelectorAll('[data-stair]').forEach(el => el.addEventListener('click', () => run(() => game.stair(el.dataset.stair))));
-      document.querySelectorAll('[data-lane]').forEach(el => {
+      document.querySelectorAll('[data-ingredient]').forEach(el => {
         el.addEventListener('pointerdown', event => {
           if(event.button!==0)return;
-          event.preventDefault(); run(() => cafeController.hit(Number(el.dataset.lane)));
+          event.preventDefault(); run(() => cafeController.hit(Number(el.dataset.ingredient)));
         });
         // 키보드·보조기술로 발생한 클릭도 지원하며 터치와 중복 판정하지 않는다.
-        el.addEventListener('click', event => { if(event.detail===0)run(() => cafeController.hit(Number(el.dataset.lane))); });
+        el.addEventListener('click', event => { if(event.detail===0)run(() => cafeController.hit(Number(el.dataset.ingredient))); });
       });
       document.addEventListener('keydown', event => {
         if (page === 'work' && (activeConstruction || activeCafe) && event.key === 'Tab') {
@@ -135,7 +139,7 @@
         }
         if (page !== 'work' || !state.minigame || /INPUT|SELECT|TEXTAREA/.test(event.target.tagName) || event.repeat) return;
         if (state.minigame.type === 'construction' && ['ArrowUp', ' '].includes(event.key)) { event.preventDefault(); run(() => game.stair(event.key === 'ArrowUp' ? 'up' : 'turn')); }
-        const lane = ['d','f','j','k'].indexOf(event.key.toLowerCase());
+        const lane = ['1','2','3','4'].indexOf(event.key);
         if (state.minigame.type === 'cafe' && lane >= 0) { event.preventDefault(); run(() => cafeController.hit(lane)); }
       });
       $('connect-market').addEventListener('click',connectMarket);
@@ -154,6 +158,7 @@
         finally{$('lookup-stock').disabled=false;}
       }));
       $('stock-form').addEventListener('submit', event => { event.preventDefault(); run(async () => { const order=await game.trade($('stock-side').value, stockCode(), Number($('stock-quantity').value)); showQuote(game.quotes[order.code]);notify('게임머니 주문 체결 · '+order.quantity+'주 · 1주 '+won(order.price)+' · 수수료 '+won(order.fee)); }); });
+      $('home-assets-refresh').addEventListener('click',()=>run(async()=>{if(Object.keys(game.state.stocks).length){if(!game.market)await connectMarket();if(!game.market)throw Error('주식 시세 서버 연결 후 다시 새로고침해줘.');await game.refreshPortfolio();}else game.emit();}));
       $('refresh-stocks').addEventListener('click', () => run(() => game.refreshPortfolio()));
       $('chat-form').addEventListener('submit', event => { event.preventDefault(); run(async () => { await stationController.send($('chat-input').value); $('chat-input').value = ''; }); });
       function profileRow(label, value) { const row = element('div'); row.append(element('dt', label), element('dd', value)); $('public-profile').append(row); }
@@ -167,7 +172,8 @@
         $('pending-income').textContent = won(state.income.pending);
         $('rest-toggle').textContent = state.rest.running ? '휴식 끝내기' : '무료 휴식 시작';
         const place = data.locations.find(place => place.id === state.location);
-        const scene=BusangiScenes.resolve(state);
+        const scene=BusangiScenes.resolve(state,page,mapActivity);
+        document.querySelector('.scene').classList.toggle('profile-scene',page==='home');
         const scenePlace=scene.location==='home'?'우리 집':scene.location==='study-room'?'독서실':scene.venue?place.name+' · '+scene.venue:scene.location==='lotteworld'?'부산 롯데월드':place.name;
         const sceneElement=document.querySelector('.scene'),character=$('scene-character');
         $('scene-place').textContent=scenePlace;$('scene-description').textContent=scene.label;
@@ -180,7 +186,7 @@
           character.dataset.action=scene.action;character.alt=scene.alt;character.src=scene.src;
           character.classList.remove('scene-action-enter');
         }
-        const dress=page==='closet'&&previewClothing?BusangiWardrobe.withItem(state.equipped,previewClothing):state.equipped;
+        const dress=page==='home'&&previewClothing?BusangiWardrobe.withItem(state.equipped,previewClothing):state.equipped;
         const dressNames=Object.values(dress).map(id=>data.clothes.find(i=>i.id===id)?.name).filter(Boolean).join(', ');
         BusangiWardrobe.apply(character,scene,dress,dressNames);
         $('closet-preview-status').textContent=previewClothing?'미리보기 · '+data.clothes.find(i=>i.id===previewClothing).name+' (구매·재화 사용 없음)':'현재 착용한 옷을 보고 있어.';
@@ -192,15 +198,15 @@
           background.style.backgroundImage=scene.background?'url('+JSON.stringify(scene.background)+')':'none';
         }
         sceneElement.classList.toggle('has-background',!!scene.background);
-        $('background-status').hidden=!!scene.background;
+        $('background-status').hidden=!!scene.background||page==='home';
         $('background-status').textContent=scenePlace+' · 배경 이미지 준비 중';
         $('current-location').textContent = '현재 장소 · ' + place.name; $('location-description').textContent = place.description;
         if (lastPlace !== place.id) {
           lastPlace = place.id; $('location-activities').replaceChildren();
           place.activities.forEach(activity => $('location-activities').append(button(activityNames[activity], () => {
-            game.visit(place.id, activity);
+            mapActivity=null;game.visit(place.id, activity);
             if (activity === 'plaza') navigate('station');
-            else if (activity === 'view') { navigate('home'); notify(place.name + '의 경치를 감상하고 있어.'); }
+            else if (activity === 'view') { notify(place.name + '의 경치를 감상하고 있어.'); }
             else notify(activityNames[activity] + ' 메뉴를 아래에서 골라봐!');
           })));
         }
@@ -213,7 +219,6 @@
         document.querySelectorAll('[data-clothing]').forEach(el => { const item = data.clothes.find(item => item.id === el.dataset.clothing); el.disabled = state.clothes.includes(item.id) || state.cash < item.price; el.textContent = state.clothes.includes(item.id) ? '보유 중' : '구매하기'; });
         document.querySelectorAll('[data-equip]').forEach(el => {const wearing=Object.values(state.equipped).includes(el.dataset.equip);el.disabled=!state.clothes.includes(el.dataset.equip)||wearing;el.textContent=wearing?'착용 중':'착용하기';});
         const outfit = Object.entries(state.equipped).map(([slot, id]) => ({slot, item: data.clothes.find(item => item.id === id)})).filter(entry => entry.item);
-        $('outfit-summary').textContent = (previewClothing?'미리보기 의상: ':'현재 의상: ') + (dressNames || '기본 부산기');
         $('equipped-list').replaceChildren(...outfit.map(({slot, item}) => { const li = element('li', item.name + ' '); li.append(button('벗기', () => game.unequip(slot))); return li; }));
         if (!outfit.length) $('equipped-list').append(element('li', '기본 부산기를 착용 중이야.'));
         const seconds = Math.floor(state.study.remainderMs / 1000);
@@ -228,6 +233,14 @@
         document.querySelectorAll('[data-asset-owned]').forEach(el => { el.textContent = '보유 지분 ' + (state.assetShares[el.dataset.assetOwned] || 0) + '%'; });
         document.querySelectorAll('[data-asset-buy]').forEach(el => { const asset = data.assets.find(a => a.id === el.dataset.assetBuy); el.disabled = (state.assetShares[asset.id] || 0) >= 100 || state.cash < asset.price * (asset.type === 'car' ? 1 : 0.01); });
         const portfolio = game.portfolio();
+        $('home-total-assets').textContent=portfolio.total===null?'주식 시세 확인 필요':won(portfolio.total);
+        $('home-property-value').textContent=won(portfolio.assetValue);
+        $('home-stock-value').textContent=portfolio.unpriced.length?'미조회 '+portfolio.unpriced.length+'종목':won(portfolio.stockValue);
+        $('home-cash-value').textContent=won(portfolio.cash);
+        const quoteTimes=Object.values(portfolio.quoteTimes);
+        $('home-assets-status').textContent=portfolio.unpriced.length?'보유 주식의 시세를 조회하면 총 자산을 확인할 수 있어.':quoteTimes.length?'주식은 마지막 조회 시세 기준 · 조회 '+new Date(Math.min(...quoteTimes)).toLocaleTimeString('ko-KR'):'현재 보유한 자산과 재화를 합산했어.';
+        $('home-assets-refresh').disabled=marketConnecting;
+
         $('total-assets').textContent = portfolio.total === null ? '주식 시세 확인 필요' : won(portfolio.total); $('owned-value').textContent = won(portfolio.assetValue);
         $('stock-fields').disabled = !state.marketConnected; $('refresh-stocks').disabled = !state.marketConnected;
         $('market-status').textContent = marketMessage;
@@ -257,10 +270,12 @@
         $('cafe-controls').hidden = construction || !state.minigame;
         $('finish-minigame').hidden = !state.minigame;
         $('cafe-pause').hidden = !cafe || !state.minigame;
-        $('cafe-volume-label').hidden = !cafe;
+        $('cafe-order-panel').hidden = !cafe || !state.minigame;
+        $('cafe-scene').hidden = !cafe;
+        $('game-canvas').hidden = cafe;
         $('cafe-pause').textContent = state.minigame?.paused ? '계속하기' : '일시정지';
-        document.querySelectorAll('[data-lane]').forEach(el => { el.disabled = !state.minigame || !!state.minigame.paused; });
-        $('game-canvas').setAttribute('aria-label',cafe ? '카페 리듬게임: 노트가 하단 판정선에 도착하면 D F J K 레인을 누르세요.' : '안전모와 벽돌 지게를 멘 부산기가 공사장 계단을 오르는 게임');
+        document.querySelectorAll('[data-ingredient]').forEach(el => { el.disabled = !state.minigame || !!state.minigame.paused; });
+        $('game-canvas').setAttribute('aria-label',cafe ? '카페 주문에 맞춰 재료를 선택하세요.' : '안전모와 벽돌 지게를 멘 부산기가 공사장 계단을 오르는 게임');
         document.querySelectorAll('[data-stair]').forEach(el => { el.disabled = !state.minigame; });
         if (constructionDone) {
           $('construction-result-reason').textContent = state.lastResult.reason === 'wrong-step' ? '앗, 발을 헛디뎠어!' : state.lastResult.reason === 'timeout' ? '오늘 근무 시간 끝!' : '수고했어, 부산기!';
@@ -270,18 +285,18 @@
         }
         if (cafeDone) {
           const result=state.lastResult;
-          $('construction-result-reason').textContent=result.completed?'음악 끝까지 완주했어!':'중간 근무 정산';
-          $('construction-result-height').textContent='정확도 '+result.accuracy+'%';
-          $('construction-result-earned').textContent=won(result.earned)+' 획득 · 완주 보너스 '+won(result.bonus);
+          $('construction-result-reason').textContent=result.completed?'오늘 카페 근무 완료!':'중간 근무 정산';
+          $('construction-result-height').textContent='음료 '+result.drinks+'잔 완성';
+          $('construction-result-earned').textContent=won(result.earned)+' 획득 · 근무 완료 보너스 '+won(result.bonus);
           $('game-status').textContent='최고 콤보 '+result.bestCombo+' · 완성 음료 '+result.drinks+'잔';
         }
         if (state.minigame) {
-          $('minigame-title').textContent = construction ? '공사장 · 계단 오르기' : '카페 · 리듬 음료 제조';
+          $('minigame-title').textContent = construction ? '공사장 · 계단 오르기' : '카페 · 주문대로 음료 만들기';
         }
         const resultKey = JSON.stringify(state.lastResult);
         if (state.lastResult && resultKey !== lastResult) { lastResult = resultKey; $('work-result').textContent = '근무 완료! ' + won(state.lastResult.earned) + ' 획득'; notify($('work-result').textContent); }
       }
-      // 공사장은 원화 캐릭터와 컬러 배경, 카페는 리듬 노트를 그린다.
+      // 공사장은 원화 캐릭터와 컬러 배경, 카페는 주문과 재료를 표시한다.
       $('scene-character').addEventListener('load',()=>{$('scene-character').classList.add('scene-action-enter');});
       $('scene-character').addEventListener('error',()=>{
         const image=$('scene-character');
@@ -301,7 +316,7 @@
           if(session)$('game-status').textContent=session.height+'계단 · 다음 발판을 보고 올라가봐!';
         } else if(activeCafe) {
           cafeController.draw();
-          if(session)$('game-status').textContent=session.paused?'음악과 노트가 일시정지됐어.':'판정선에 도착할 때 D · F · J · K를 눌러봐!';
+          if(session)$('game-status').textContent=session.paused?'잠깐 쉬는 중 · 계속하기를 눌러줘.':'주문 순서대로 1 · 2 · 3 · 4 또는 재료 버튼을 눌러줘!';
         }
       }
       // 추후 서버 연결 후 호출: await busangiJoinStation(). 실제 유저만 표시한다.

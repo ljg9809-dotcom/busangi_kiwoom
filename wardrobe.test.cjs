@@ -40,3 +40,12 @@ test('행동을 바꾸어도 착용 상태 유지·미리보기는 실제 구매
     assert.ok(wardrobe.actions.includes(scenes.resolve(state).action));assert.equal(wardrobe.selection(state.equipped).frame,3);
   }
 });
+
+test('페이지 진입 즉시 기본 자세를 선택하고 저장된 행동·타이머는 유지',()=>{
+ const s=api.create({storage:null}).snapshot();s.location='nampo';s.activity='meal';s.study.running=true;s.rest.running=true;
+ const before=JSON.stringify(s);
+ const home=scenes.resolve(s,'home');assert.equal(home.action,'stand');assert.equal(home.background,null);assert.equal(home.src,'assets/busangi-standing.png');
+ const study=scenes.resolve(s,'study');assert.equal(study.action,'study');assert.equal(study.location,'study-room');
+ const map=scenes.resolve(s,'map','view');assert.equal(map.action,'view');assert.equal(map.location,'nampo');assert.equal(map.background,'assets/backgrounds/nampo.png');
+ const eat=scenes.resolve(s,'map');assert.equal(eat.action,'eat');assert.equal(JSON.stringify(s),before);
+});

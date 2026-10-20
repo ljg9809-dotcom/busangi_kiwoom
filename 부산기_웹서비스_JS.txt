@@ -225,6 +225,12 @@
         const minutes = Math.floor(Math.max(0, time - s.rest.lastTick) / MINUTE);
         if (minutes) { s.health = clamp(s.health + minutes); s.mental = clamp(s.mental + minutes); s.rest.lastTick += minutes * MINUTE; }
       }
+      if(this.session?.type==='cafe') {
+        const cafe=this.session;
+        if(!cafe.paused)cafe.remainingMs=Math.max(0,cafe.remainingMs-Math.max(0,time-cafe.lastTick));
+        cafe.lastTick=time;
+        if(cafe.remainingMs<=0)this.finishMinigame('completed');
+      }
       if (this.session?.type === 'construction' && time >= this.session.endAt) this.finishMinigame('timeout');
       if (this.shift && time >= this.shift.endAt) {
         this.credit(this.shift.pay); s.lastResult = {type: 'work', earned: this.shift.pay}; this.shift = null; this.busy = false;
@@ -294,25 +300,20 @@
       const owned = this.state.assetShares[id] || 0; assert(owned + percent <= 100, '최대 소유 지분은 100%입니다.');
       this.tick(); this.debit(Math.round(asset.price * percent / 100)); this.state.assetShares[id] = owned + percent; this.commit();
     }
-    startMinigame(type, options = {}) {
+    startMinigame(type) {
       assert(['construction', 'cafe'].includes(type), '알 수 없는 아르바이트입니다.');
-      if (type === 'cafe') {
-        assert(Number.isFinite(options.durationMs) && options.durationMs > 0 && options.durationMs <= 7200000, '음원의 길이를 먼저 확인해주세요.');
-        assert(Array.isArray(options.notes) && options.notes.length > 0 && options.notes.length <= 20000, '음악 노트가 준비되지 않았습니다.');
-        assert(options.notes.every((n,i) => Number.isFinite(n.at) && n.at >= 0 && n.at < options.durationMs && integer(n.lane,0) && n.lane <= 3 && (!i || n.at >= options.notes[i-1].at)), '노트 형식 오류');
-      }
       this.spendEnergy(type === 'construction' ? 20 : 15, type === 'construction' ? 15 : 20);
       const time = this.now(); this.busy = true;
-      this.session = {type, startedAt: time, endAt: time + (type === 'cafe' ? 14000 : 20000), score: 0, combo: 0, bestCombo: 0, attempts: 0};
+      this.session = {type, startedAt: time, endAt: type === 'cafe' ? null : time + 20000, score: 0, combo: 0, bestCombo: 0, attempts: 0};
       if (type === 'construction') {
         Object.assign(this.session, {direction: 'right', height: 0, stairs: [{x: 0, y: 0}], lastStepAt: null});
         this.extendStairs(this.session);
       }
-      else Object.assign(this.session, {
-        durationMs: options.durationMs, playbackMs: 0, paused: false, endAt: null,
-        notes: options.notes.map(n => ({at:n.at,lane:n.lane,judged:false})),
-        trackTitle: options.title || '카페 리듬게임', hits:0, misses:0, perfect:0, feedback:null
-      });
+      else {
+        Object.assign(this.session, {durationMs:60000, remainingMs:60000, lastTick:time, paused:false,
+          drinks:0, mistakes:0, progress:0, feedback:'주문표 순서대로 재료를 눌러줘!', lastInputAt:null});
+        this.nextCafeOrder();
+      }
       this.commit(); return clone(this.session);
     }
     extendStairs(session) {
@@ -335,45 +336,51 @@
       this.extendStairs(session);
       session.endAt = Math.min(session.startedAt + 60000, session.endAt + 200); this.commit(); return clone(session);
     }
-    syncCafe(playbackMs) {
+    nextCafeOrder() {
+      const recipes = [
+        {name:'아이스 아메리카노', ingredients:[0,1]},
+        {name:'아이스 카페라테', ingredients:[0,2,1]},
+        {name:'아이스 바닐라라테', ingredients:[0,2,1,3]},
+        {name:'바닐라 밀크', ingredients:[0,2,3]}
+      ];
       const s=this.session;
-      if (!s || s.type!=='cafe' || s.paused) return;
-      assert(Number.isFinite(playbackMs) && playbackMs >= s.playbackMs - 10, '음악 재생 위치 오류');
-      s.playbackMs=Math.min(s.durationMs,Math.max(s.playbackMs,playbackMs));
-      for(const n of s.notes) if(!n.judged && n.at < s.playbackMs-200) {
-        n.judged=true;n.missed=true;s.misses++;s.combo=0;s.feedback={text:'MISS',at:s.playbackMs,lane:n.lane};
-      }
+      const index=(Math.floor(this.random()*recipes.length)+s.drinks)%recipes.length;
+      s.order=clone(recipes[index]);s.progress=0;
     }
     pauseCafe(paused) {
-      assert(this.session?.type==='cafe','진행 중인 카페 게임이 없습니다.');
-      this.session.paused=!!paused;this.commit();
+      this.tick();
+      if(this.session?.type!=='cafe')return;
+      this.session.paused=!!paused;this.session.lastTick=this.now();this.commit();
     }
-    hitNote(lane) {
-      this.tick(); const session = this.session; assert(session && session.type === 'cafe', '카페 게임을 시작해주세요.');
-      assert(integer(lane, 0) && lane <= 3, '레인은 0~3입니다.');
-      if (session.paused) return 'PAUSED';
-      const time = session.playbackMs;
-      const note = session.notes.filter(n => !n.judged && n.lane === lane && Math.abs(n.at - time) <= 200)
-        .sort((a, b) => Math.abs(a.at - time) - Math.abs(b.at - time))[0];
-      session.attempts++;
-      if (!note) { session.combo = 0; session.feedback={text:'MISS',at:time,lane}; this.commit(); return 'MISS'; }
-      note.judged = true;
-      session.combo++; session.bestCombo = Math.max(session.bestCombo, session.combo);
-      const perfect = Math.abs(note.at - time) <= 80; session.score += perfect ? 1500 : 800;
-      session.hits++; if(perfect)session.perfect++;
-      session.feedback={text:perfect?'PERFECT':'GOOD',at:time,lane};
-      this.commit(); return perfect ? 'PERFECT' : 'GOOD';
+    addCafeIngredient(ingredient) {
+      this.tick();const s=this.session;
+      if(!s||s.type!=='cafe')return;
+      assert(integer(ingredient,0)&&ingredient<=3,'올바른 재료를 선택해주세요.');
+      if(s.paused)return 'PAUSED';
+      if(s.lastInputAt!==null&&this.now()-s.lastInputAt<100)return 'WAIT';
+      s.lastInputAt=this.now();s.attempts++;
+      if(s.order.ingredients[s.progress]!==ingredient){
+        s.mistakes++;s.combo=0;s.progress=0;s.feedback='앗, 재료가 달라! 첫 재료부터 다시 해보자.';
+        this.commit();return 'WRONG';
+      }
+      s.progress++;s.feedback='좋아! 다음 재료를 넣어줘.';
+      if(s.progress===s.order.ingredients.length){
+        const name=s.order.name;s.drinks++;s.combo++;s.bestCombo=Math.max(s.combo,s.bestCombo);
+        const pay=1000+Math.min(s.combo,10)*100;s.score+=pay;
+        this.nextCafeOrder();s.feedback=name+' 서빙 완료! +'+money(pay);
+        this.commit();return 'SERVED';
+      }
+      this.commit();return 'ADDED';
     }
     finishMinigame(reason = 'manual') {
       const session = this.session; if (!session) return null;
-      const completed = session.type==='cafe' && reason==='completed' && session.playbackMs >= session.durationMs-250;
-      assert(reason!=='completed' || completed, '음악이 끝나야 완주 보너스를 받을 수 있습니다.');
+      const completed = session.type==='cafe' && reason==='completed' && session.remainingMs<=0;
+      assert(reason!=='completed' || completed, '근무 시간을 채워야 완료 보너스를 받을 수 있습니다.');
       const bonus=completed?10000:0;
-      const earned = 3000 + session.score + (session.type === 'cafe' ? session.bestCombo * 100 : 0)+bonus;
+      const earned = 3000 + session.score + bonus;
       this.credit(earned); this.state.lastResult = {type: session.type, earned, height: session.height || 0, score: session.score, reason, runId: session.startedAt};
-      if(session.type==='cafe')Object.assign(this.state.lastResult,{bonus,completed,hits:session.hits,misses:session.misses,
-        accuracy:Math.round((session.perfect+(session.hits-session.perfect)*0.6)/session.notes.length*1000)/10,
-        bestCombo:session.bestCombo,drinks:Math.floor(session.hits/4),trackTitle:session.trackTitle});
+      if(session.type==='cafe')Object.assign(this.state.lastResult,{bonus,completed,
+        mistakes:session.mistakes,bestCombo:session.bestCombo,drinks:session.drinks});
       this.session = null; this.busy = false; this.commit(); return clone(this.state.lastResult);
     }
     async trade(side, code, quantity) {

@@ -309,33 +309,120 @@ body.construction-open { overflow: hidden; }
   .location-grid .location-thumb { border-radius:6px; margin-bottom:10px; }
 }
 
-.cafe-music-settings { margin: 0 0 24px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; }
-.cafe-music-settings summary { cursor: pointer; font-weight: 700; }
-.cafe-music-settings p { font-size: 12px; color: #666; margin: 14px 0; }
-.cafe-music-settings input { display: block; margin: 10px 0; }
-#minigame-area.cafe-mode {
-  position: fixed; inset: 0; z-index: 100; max-width: none; margin: 0; border: 0; border-radius: 0;
-  display: grid; grid-template-columns: minmax(0,1fr) 220px; grid-template-rows: auto auto 1fr auto auto auto auto;
-  gap: 8px 28px; padding: 18px max(20px,calc((100vw - 820px)/2)); background: #f5f5f3; overflow: auto;
+/* 카페 주문 게임: 그림, 주문표, 네 개의 재료 버튼. */
+#minigame-area.cafe-mode { position:fixed; inset:0; z-index:100; margin:0; max-width:none; border:0; border-radius:0; background:#f7f6f2; overflow:auto; display:grid; grid-template-columns:minmax(280px,600px) minmax(280px,380px); grid-template-rows:auto auto 1fr auto auto auto; justify-content:center; align-content:start; gap:14px 24px; padding:24px; }
+.cafe-mode > h2 { grid-column:1/-1; margin:0; font-size:24px; }
+.cafe-mode #game-status { grid-column:1/-1; margin:0; font-size:13px; }
+.cafe-mode .minigame-stage { grid-column:1; grid-row:3/7; position:relative; align-self:center; border:2px solid #111; border-radius:18px; overflow:hidden; background:#e3ded5; }
+#cafe-scene { display:block; width:100%; aspect-ratio:3/2; object-fit:cover; }
+#cafe-order-panel { grid-column:2; padding:20px; border:2px solid #111; border-radius:14px; background:white; }
+.cafe-metrics { display:flex; justify-content:space-between; gap:8px; font-size:12px; }
+.cafe-metrics strong { display:block; font-size:22px; margin-top:4px; }
+.cafe-order-label { font-size:11px; letter-spacing:.08em; margin:22px 0 8px; color:#666; }
+#cafe-order-name { margin:0 0 16px; font-size:25px; }
+#cafe-recipe { display:flex; flex-wrap:wrap; gap:8px; padding:0; list-style:none; }
+#cafe-recipe li { border:1px solid #ccc; border-radius:8px; padding:9px 12px; font-size:14px; }
+#cafe-recipe .next { background:#111; color:#fff; border-color:#111; }
+#cafe-recipe .done { color:#777; background:#eee; }
+#cafe-feedback { font-size:13px; min-height:40px; margin:12px 0 0; }
+.cafe-mode #cafe-controls { grid-column:2; display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0; }
+.cafe-mode #cafe-controls button { display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 4px; min-width:0; min-height:92px; margin:0; background:#fff; color:#111; border:2px solid #111; box-shadow:0 3px #111; touch-action:manipulation; font-size:14px; }
+#cafe-controls kbd { font:700 13px sans-serif; }
+#cafe-controls span { font-size:25px; filter:grayscale(1); }
+.cafe-mode #cafe-controls button:active:not(:disabled) { transform:translateY(3px); box-shadow:none; }
+.cafe-mode #cafe-pause,.cafe-mode #finish-minigame,.cafe-mode #construction-exit { grid-column:2; margin:0; width:100%; }
+.cafe-mode #construction-exit { background:transparent; color:#555; }
+@media(max-width:750px) {
+ #minigame-area.cafe-mode { display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch; padding:14px; gap:10px; }
+ .cafe-mode > h2 { font-size:19px; }
+ .cafe-mode #game-status { font-size:11px; }
+ .cafe-mode .minigame-stage { order:1; width:100%; max-width:520px; flex-shrink:0; margin:auto; }
+ .cafe-mode #cafe-scene { height:clamp(140px,24dvh,240px); aspect-ratio:auto; object-position:center 46%; }
+ #cafe-order-panel { order:2; padding:12px; }
+ .cafe-order-label { margin:10px 0 4px; }
+ #cafe-order-name { font-size:21px; margin-bottom:8px; }
+ #cafe-feedback { min-height:20px; margin-top:8px; }
+ #cafe-recipe { margin:8px 0; }
+ .cafe-mode #cafe-controls { order:3; }
+ .cafe-mode #cafe-controls button { min-height:75px; padding:6px; }
+ .cafe-mode #cafe-pause,.cafe-mode #finish-minigame,.cafe-mode #construction-exit { order:4; padding:9px; }
 }
-.cafe-mode > h2 { grid-column: 2; margin: 8px 0 0; text-align: center; font-size: 20px; }
-.cafe-mode #game-status { grid-column: 2; margin: 0; text-align: center; font-size: 11px; }
-.cafe-mode .minigame-stage { grid-column: 1; grid-row: 1 / 8; position: relative; align-self: center; justify-self: end; height: min(640px,calc(100dvh - 36px)); width: auto; max-width: 100%; aspect-ratio: 3/4; border: 2px solid #111; border-radius: 12px; overflow: hidden; }
-.cafe-mode #game-canvas { width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; }
-.cafe-mode #cafe-controls { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; align-self: center; width: 100%; gap: 9px; margin: 0; }
-.cafe-mode #cafe-controls button { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65px; margin: 0; padding: 5px; border: 2px solid #111; box-shadow: 0 3px 0 #111; font-size: 23px; font-weight: 700; touch-action: manipulation; user-select: none; }
-.cafe-mode #cafe-controls small { font-size: 10px; font-weight: 400; }
-.cafe-mode #cafe-controls button:active:not(:disabled) { box-shadow: none; transform: translateY(3px); }
-.cafe-mode #cafe-pause,.cafe-mode #finish-minigame,.cafe-mode #construction-exit,.cafe-mode #cafe-volume-label { grid-column: 2; width: 100%; margin: 0; font-size: 12px; }
-.cafe-mode #cafe-volume-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-#cafe-volume { accent-color: #111; padding: 0; width: 160px; }
-.cafe-mode #construction-exit { color: #666; border-color: #aaa; background: transparent; }
-.cafe-mode .construction-result h3 { font-size: 25px; }
-@media (max-width: 650px) and (orientation: portrait) {
-  #minigame-area.cafe-mode { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; }
-  .cafe-mode > h2 { font-size: 16px; margin: 0; }
-  .cafe-mode .minigame-stage { align-self: center; height: min(640px,calc(100dvh - 275px)); flex-shrink: 0; }
-  .cafe-mode #cafe-controls { grid-template-columns: repeat(4,1fr); width: min(100%,360px); margin: 3px 0; }
-  .cafe-mode #cafe-controls button { min-height: 52px; font-size: 20px; }
-  .cafe-mode #cafe-pause,.cafe-mode #finish-minigame,.cafe-mode #construction-exit,.cafe-mode #cafe-volume-label { align-self: center; width: min(100%,360px); padding: 5px 10px; font-size: 11px; }
+
+
+@media (min-width:751px) and (max-height:600px) {
+ #minigame-area.cafe-mode { padding:12px; gap:6px 18px; grid-template-rows:auto auto auto auto auto auto; }
+ .cafe-mode > h2 { font-size:19px; }
+ .cafe-mode #game-status { font-size:11px; }
+ .cafe-mode .minigame-stage { align-self:start; grid-row:3/6; }
+ #cafe-order-panel { padding:10px 14px; }
+ .cafe-metrics strong { display:inline; font-size:18px; margin-left:5px; }
+ .cafe-order-label { margin:10px 0 4px; font-size:10px; }
+ #cafe-order-name { font-size:21px; margin-bottom:8px; }
+ #cafe-recipe { margin:6px 0; }
+ #cafe-recipe li { padding:6px 9px; }
+ #cafe-feedback { min-height:20px; margin:6px 0 0; font-size:12px; }
+ .cafe-mode #cafe-controls button { min-height:60px; padding:4px; gap:1px; }
+ #cafe-controls span { font-size:18px; }
+ .cafe-mode #cafe-pause,.cafe-mode #finish-minigame,.cafe-mode #construction-exit { padding:6px 10px; font-size:12px; }
+ .cafe-mode #construction-exit { grid-column:1; grid-row:6; }
+}
+
+.ranking-rules p { font-size:14px; line-height:1.8; }
+.ranking-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:18px 0; }
+.ranking-table-wrap { overflow-x:auto; border:1px solid #ddd; border-radius:12px; }
+.ranking-table { width:100%; border-collapse:collapse; min-width:760px; }
+.ranking-table caption { text-align:left; padding:16px; font-weight:700; }
+.ranking-table th,.ranking-table td { text-align:left; padding:14px; border-top:1px solid #ddd; font-size:13px; }
+.ranking-table th { background:#111; color:white; white-space:nowrap; }
+.ranking-table td:nth-child(2) { overflow-wrap:anywhere; max-width:220px; }
+.ranking-table td:last-child { font-weight:700; }
+.ranking-self { background:#eee; outline:2px solid #111; outline-offset:-2px; }
+
+@media(max-width:1000px) { .ranking-table { min-width:480px; } .ranking-table th,.ranking-table td { padding:10px 7px; font-size:11px; } .ranking-table td { overflow-wrap:anywhere; } }
+
+/* 나의 부산기는 장소·타이머와 독립된 흰 배경의 착용 화면. */
+.scene.profile-scene { background:#fff; min-height:420px; align-items:center; }
+.profile-scene .scene-background { background:#fff; }
+.scene.profile-scene .character { height:350px; max-width:90%; margin:20px auto; }
+.profile-scene figcaption,.profile-scene .scene-action-label { display:none; }
+#wardrobe-panel { margin:24px 0 32px; }
+#wardrobe-panel .section-header { margin-bottom:16px; }
+#wardrobe-panel h2 { font-size:24px; }
+@media(max-width:650px){.scene.profile-scene{min-height:340px}.scene.profile-scene .character{height:300px}}
+
+#wardrobe-panel { border:1px solid var(--line); border-radius:12px; background:#fff; }
+#wardrobe-panel > summary { cursor:pointer; padding:20px; font-size:24px; font-weight:700; }
+#wardrobe-panel[open] > summary { border-bottom:1px solid var(--line); }
+.wardrobe-content { padding:0 20px 20px; }
+.home-total-assets { display:block; font-size:30px; font-weight:700; margin:16px 0; }
+.home-assets-breakdown { display:flex; flex-wrap:wrap; gap:18px 32px; margin:16px 0; }
+.home-assets-breakdown dt { color:#666; font-size:13px; margin-bottom:6px; }
+.home-assets-breakdown dd { margin:0; font-weight:700; }
+#home-assets-status { color:#666; font-size:12px; }
+
+#account-dialog { position:fixed; width:min(440px,92vw); max-height:90dvh; overflow:auto; padding:28px; }
+#account-dialog h2 { margin:0 38px 16px 0; font-size:26px; }
+#account-dialog #account-close { position:absolute; top:10px; right:10px; width:32px; height:32px; min-height:0; padding:0; margin:0; line-height:28px; font-size:25px; border:0; background:transparent; color:#555; }
+.account-tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:18px 0; }
+#account-dialog .account-tabs button { margin:0; font-size:14px; padding:10px; }
+.account-tabs button[aria-pressed=true] { background:#111; color:white; }
+#account-dialog .account-primary { display:block; width:100%; margin:18px 0 8px; background:#111; color:white; padding:13px; }
+#account-state { padding:12px; border-radius:8px; background:#f5f5f3; line-height:1.6; }
+#account-dialog .prototype-note { line-height:1.65; margin:16px 0 0; }
+@media(min-width:600px) and (max-height:650px) {
+ #account-dialog { width:560px; max-width:92vw; padding:16px 22px; }
+ #account-dialog h2 { font-size:22px; margin-bottom:8px; }
+ #account-state { padding:8px; font-size:11px; margin:0 0 8px; }
+ .account-tabs { margin:8px 0; }
+ #account-dialog .account-tabs button { padding:6px; font-size:12px; }
+ #account-form { display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; }
+ #account-form label[for=account-nickname] { grid-column:1; grid-row:1; }
+ #account-form label[for=account-password] { grid-column:2; grid-row:1; }
+ #account-nickname { grid-column:1; grid-row:2; }
+ #account-password { grid-column:2; grid-row:2; }
+ #account-dialog #account-form input:not([type=checkbox]) { margin:0 0 4px; padding:8px; font-size:13px; }
+ #account-form label { font-size:12px; }
+ #account-import-row { grid-column:1/-1; margin:6px 0; }
+ #account-dialog #account-submit { grid-column:1/-1; margin:6px 0 0; padding:9px; font-size:13px; }
+ #account-dialog .prototype-note { margin-top:10px; font-size:10px; }
 }

@@ -35,6 +35,11 @@ class AccountStore{
     const result=this.db.prepare('UPDATE saves SET state=?,revision=revision+1 WHERE user_id=? AND revision=?').run(json,user.id,revision);
     if(!result.changes)throw Error('SAVE_CONFLICT');return revision+1;
   }
+  rankingRows(){return this.db.prepare('SELECT users.id,users.nickname,saves.state FROM users JOIN saves ON saves.user_id=users.id').all();}
+  ranking(user,page=1,quotes={}){
+    const rows=this.db.prepare('SELECT users.id,users.nickname,saves.state FROM users JOIN saves ON saves.user_id=users.id').all();
+    return require('./ranking.cjs').leaderboard(rows,user?.id,page,quotes);
+  }
   close(){this.db.close();}
 }
 module.exports={AccountStore};

@@ -5,13 +5,13 @@ const {AccountStore}=require('./account-store.cjs');
 const {Plaza}=require('./plaza-server.cjs');
 const PORT=Number(process.env.PORT)||4173,ROOT=__dirname;
 const publicOrigin=process.env.BUSANGI_PUBLIC_ORIGIN?new URL(process.env.BUSANGI_PUBLIC_ORIGIN).origin:null;
-const hosts=new Set(['127.0.0.1:'+PORT,'localhost:'+PORT,...(publicOrigin?[new URL(publicOrigin).host]:[])]);
+const hosts=new Set(['127.0.0.1:'+PORT,'localhost:'+PORT,...(process.env.BUSANGI_API_ORIGIN?[new URL(process.env.BUSANGI_API_ORIGIN).host]:[]),...(publicOrigin?[new URL(publicOrigin).host]:[])]);
 const origins=new Set(['null','http://127.0.0.1:'+PORT,'http://localhost:'+PORT,...(publicOrigin?[publicOrigin]:[])]);
 const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ttf':'font/ttf','.ogg':'audio/ogg','.mp3':'audio/mpeg','.wav':'audio/wav'};
-const PUBLIC=new Set(['index.html','scenes-preview.html','actions-preview.html','wardrobe-preview.html','style.css','busangi-game.js','busangi-ui.js','construction-scene.js','cafe-rhythm.js','cafe-track.js','cafe-controller.js','scene-assets.js','market-client.js','wardrobe-renderer.js','account-client.js','station-controller.js','stock-search.js']);
+const PUBLIC=new Set(['index.html','scenes-preview.html','actions-preview.html','wardrobe-preview.html','style.css','busangi-game.js','busangi-ui.js','construction-scene.js','cafe-controller.js','scene-assets.js','market-client.js','wardrobe-renderer.js','account-client.js','account-response.js','station-controller.js','stock-search.js','ranking-client.js']);
 function readJSON(req){return new Promise((resolve,reject)=>{let body='',size=0;req.on('data',d=>{size+=d.length;if(size>300000){reject(Error('요청이 너무 커.'));req.destroy();}else body+=d;});req.on('end',()=>{try{resolve(JSON.parse(body||'{}'));}catch{reject(Error('요청 형식을 확인해줘.'));}});req.on('error',()=>reject(Error('요청을 읽지 못했어.')));});}
 function createServer(market,options={}){
-  const accounts=options.accounts||new AccountStore(),plaza=new Plaza(),drafts=new Map(),attempts=new Map();let authBusy=0;
+  const accounts=options.accounts||new AccountStore(),plaza=new Plaza(),drafts=new Map(),attempts=new Map();let authBusy=0;const rankingQuoteCache=new Map();let rankingQuotePending=null;
   const server=http.createServer(async(req,res)=>{
     const host=req.headers.host;
     if(!hosts.has(host)){res.writeHead(403).end();return;}
@@ -24,6 +24,18 @@ function createServer(market,options={}){
     let url;try{url=new URL(req.url,'http://127.0.0.1:'+PORT);decodeURIComponent(url.pathname);}catch{json(400,{error:'잘못된 주소야.'});return;}
     const sessionToken=/(?:^|;\s*)busangi_session=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie||'')?.[1];
     const user=accounts.user(sessionToken);
+    if(url.pathname==='/api/health'&&req.method==='GET'){json(200,{ok:true,service:'busangi',accounts:true});return;}
+    if(url.pathname==='/api/ranking'){
+      if(req.method!=='GET'){json(405,{error:'랭킹은 조회만 할 수 있어.'});return;}
+      const page=Number(url.searchParams.get('page')||1);
+      if(!Number.isSafeInteger(page)||page<1){json(400,{error:'페이지 번호를 확인해줘.'});return;}
+      try{
+        if(!rankingQuotePending){const rows=accounts.rankingRows();rankingQuotePending=require('./ranking.cjs').getRankingQuotes(rows,market,rankingQuoteCache).then(v=>({...v,rows}));}
+        const valuation=await rankingQuotePending;
+        json(200,{...require('./ranking.cjs').leaderboard(valuation.rows,user?.id,page,valuation.quotes),valuationAt:valuation.valuationAt,stale:valuation.stale});
+      }catch(e){json(503,{error:e.message});}finally{rankingQuotePending=null;}
+      return;
+    }
     if(url.pathname.startsWith('/api/auth/')||url.pathname==='/api/save'){
       if(origin==='null'){json(403,{error:'계정 저장은 게임 서버 주소에서 이용해줘.'});return;}
       try{
@@ -73,7 +85,7 @@ function createServer(market,options={}){
       json(200,{...status,mode:'current-price',source:'한국투자증권 · 시세 조회 전용'});return;
     }
     if(url.pathname==='/api/market/quote'){
-      try{json(200,await market.getQuote(url.searchParams.get('code')||''));}catch(e){json(503,{error:e.message});}return;
+      try{const q=await market.getQuote(url.searchParams.get('code')||'');rankingQuoteCache.set(q.code,q);json(200,q);}catch(e){json(503,{error:e.message});}return;
     }
     if(url.pathname.startsWith('/api/')){json(404,{error:'지원하지 않는 기능이야.'});return;}
     const name=decodeURIComponent(url.pathname).replace(/^\//,'')||'index.html';

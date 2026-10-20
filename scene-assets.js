@@ -2,7 +2,7 @@
 (function(root){
   'use strict';
   const characters={
-    idle:'assets/busangi-character.png',
+    idle:'assets/busangi-character.png',stand:'assets/busangi-standing.png',
     eat:'assets/actions/busangi-eat.png',drink:'assets/actions/busangi-drink.png',
     view:'assets/actions/busangi-view.png',study:'assets/actions/busangi-study.png',
     rest:'assets/actions/busangi-rest.png',pc:'assets/actions/busangi-pc-clean.png',
@@ -29,6 +29,7 @@
     lotteworld:{x:77,height:68,bottom:52,backgroundPosition:'center 52%'}
   };
   const actions={
+    stand:{label:'나의 부산기',alt:'손을 내리고 편안하게 서 있는 부산기'},
     idle:{label:'부산에서 보내는 하루',alt:'인사하는 부산기'},
     eat:{label:'밥 먹는 중',alt:'작은 식탁에서 국밥을 떠먹는 부산기'},
     drink:{label:'음료 마시는 중',alt:'컵의 빨대로 음료를 마시는 부산기'},
@@ -40,7 +41,10 @@
     movie:{label:'영화 보는 중',alt:'팝콘을 먹으며 영화를 보는 부산기'},
     park:{label:'놀이공원에서 노는 중',alt:'놀이기구에서 두 손을 들고 즐거워하는 부산기'}
   };
-  function resolve(state){
+  function resolve(state,page=null,activityOverride=null){
+    if(page==='home')return {action:'stand',location:'home',activity:'stand',src:characters.stand,...actions.stand,layout:{x:50,height:78,bottom:0,backgroundPosition:'center'},venue:null,background:null};
+    if(page==='study'){const scene=resolve({...state,location:'study-room',activity:'study',study:{running:true},rest:{running:false}});if(!state.study.running)scene.label='공부할 준비';return scene;}
+    if(page==='map')state={...state,activity:activityOverride||state.activity,study:{running:false},rest:{running:false}};
     let action='idle',location=state.location,activity=state.activity;
     if(state.study.running||activity==='study'){action='study';location='study-room';activity='study';}
     else if(state.rest.running||activity==='rest'){action='rest';location='home';activity='rest';}

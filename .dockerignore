@@ -1,0 +1,14 @@
+*
+!package.json
+!*.cjs
+!*.js
+!*.html
+!style.css
+!assets/
+!assets/**
+.env*
+*.sqlite*
+*.dpapi*
+.git/
+.vercel/
+dist/

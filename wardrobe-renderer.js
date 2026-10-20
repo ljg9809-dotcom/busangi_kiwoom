@@ -5,7 +5,7 @@
   'use strict';
   const slots={shirt:'top','white-shirt':'top',sweatshirt:'top',hoodie:'top',jacket:'outer','busan-set':'set',cap:'hat',pants:'bottom',sneakers:'shoes'};
   const frames={shirt:0,'white-shirt':1,sweatshirt:2,hoodie:3,jacket:4,'busan-set':5,cap:6,pants:7,sneakers:8};
-  const actions=['idle','eat','drink','view','study','rest','pc','karaoke','movie','park'];
+  const actions=['stand','idle','eat','drink','view','study','rest','pc','karaoke','movie','park'];
   const files={pc:'pc-v2',view:'view-v2'};
   function withItem(equipped,id){
     if(!slots[id])return {...equipped};
