@@ -8,7 +8,7 @@ Supabase 프로젝트: busangi-kiwoom (서울)
 - BUSANGI_BACKEND_ORIGIN=https://eqqsbkeutuhltjrxhceh.supabase.co
 - BUSANGI_BACKEND_MODE=supabase
 
-위 값은 공개 서버 주소와 실행 모드이며 비밀 키가 아닙니다. vercel.cjs는 /api/*를 Supabase Edge Function busangi-api로 전달합니다. build-vercel.cjs는 허용한 화면 파일과 에셋만 dist에 복사합니다. Git main 변경으로 재배포합니다.
+위 값은 공개 서버 주소와 실행 모드이며 비밀 키가 아닙니다. vercel.mjs는 /api/*를 Supabase Edge Function busangi-api로 전달합니다. build-vercel.mjs는 허용한 화면 파일과 에셋만 dist에 복사합니다. Git main 변경으로 재배포합니다.
 
 ## Supabase 서버 설정
 
@@ -28,3 +28,4 @@ cloud-api-smoke.cjs는 BUSANGI_SMOKE_URL을 지정한 경우에만 원격 가입
 ## 로컬 실행 대안
 
 npm start는 기존 SQLite/DPAPI 기반 로컬 서버를 실행합니다. 외부 Node 호스팅을 따로 사용하는 경우 BUSANGI_BACKEND_MODE=node와 해당 HTTPS 주소를 설정하고 BUSANGI_DATA_DIR을 영구 디스크로 지정합니다.
+
