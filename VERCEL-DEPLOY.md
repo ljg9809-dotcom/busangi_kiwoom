@@ -29,3 +29,11 @@ cloud-api-smoke.cjs는 BUSANGI_SMOKE_URL을 지정한 경우에만 원격 가입
 
 npm start는 기존 SQLite/DPAPI 기반 로컬 서버를 실행합니다. 외부 Node 호스팅을 따로 사용하는 경우 BUSANGI_BACKEND_MODE=node와 해당 HTTPS 주소를 설정하고 BUSANGI_DATA_DIR을 영구 디스크로 지정합니다.
 
+
+## 허용 접속 주소
+
+공식 도메인과 같은 프로젝트의 고정 main 별칭을 명시적으로 허용합니다:
+- https://busangikiwoom.vercel.app
+- https://busangikiwoom-git-main-ljg9809-7416.vercel.app
+
+임의의 *.vercel.app 또는 요청의 X-Forwarded-Host만으로 접근을 허용하지 않습니다. 추가 도메인은 BUSANGI_ALLOWED_ORIGINS에 정확한 Origin을 지정합니다. 원격 검증은 BUSANGI_SMOKE_ORIGIN으로 실제 브라우저 Origin을 포함하며, 기본값은 공식 도메인입니다. main 별칭에 대한 403 회귀 검사는 cloud-origin.test.cjs에 있습니다.

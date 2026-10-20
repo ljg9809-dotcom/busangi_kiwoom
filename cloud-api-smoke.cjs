@@ -2,10 +2,11 @@
 'use strict';
 const assert=require('node:assert/strict'),{randomBytes}=require('node:crypto'),game=require('./busangi-game.js');
 const base=process.env.BUSANGI_SMOKE_URL;if(!base)throw Error('BUSANGI_SMOKE_URL is required');
+const origin=process.env.BUSANGI_SMOKE_ORIGIN||'https://busangikiwoom.vercel.app';
 const ids=[],players=[];
 async function main(){
  const suffix=randomBytes(5).toString('hex'),password=randomBytes(20).toString('hex');
- async function call(path,body,cookie,token){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json','X-Busangi-Request':'1'}:{}),...(cookie?{Cookie:cookie}:{}),...(token?{'X-Plaza-Token':token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(30000)});return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
+ async function call(path,body,cookie,token){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{Origin:origin,...(body?{'Content-Type':'application/json','X-Busangi-Request':'1'}:{}),...(cookie?{Cookie:cookie}:{}),...(token?{'X-Plaza-Token':token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(30000)});return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
  const a=await call('/api/auth/register',{nickname:'검증★,'+suffix,password});assert.equal(a.status,200,JSON.stringify(a.data));ids.push(a.data.user.id);assert.ok(a.cookie);
  const state=game.create({storage:null,load:false}).state;
  const saved=await call('/api/save',{state,revision:0},a.cookie);assert.equal(saved.status,200,JSON.stringify(saved.data));assert.equal(saved.data.revision,1);

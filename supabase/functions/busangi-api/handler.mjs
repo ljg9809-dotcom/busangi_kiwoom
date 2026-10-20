@@ -4,6 +4,7 @@ import {Buffer} from 'node:buffer';
 import './game-rules.js';
 import {leaderboard,getRankingQuotes} from './ranking.mjs';
 import {KisMarket} from './kis-market.mjs';
+import {allowedOrigins} from './origins.mjs';
 const derive=promisify(scrypt),API=globalThis.BusangiGame,validator=API.create({storage:null,load:false});
 const env=name=>Deno.env.get(name),hash=s=>createHash('sha256').update(s).digest('hex');
 const serviceKey=()=>{try{return JSON.parse(env('SUPABASE_SECRET_KEYS')||'{}').default||env('SUPABASE_SERVICE_ROLE_KEY');}catch{return env('SUPABASE_SERVICE_ROLE_KEY');}};
@@ -58,8 +59,8 @@ const message={SAVE_CONFLICT:'다른 창에서 저장 내용이 바뀌었어. �
 export async function handler(req){
  const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
  const json=(status,data)=>new Response(JSON.stringify(data),{status,headers});
- const origin=req.headers.get('origin'),allowed=(env('BUSANGI_ALLOWED_ORIGINS')||'https://busangikiwoom.vercel.app').split(',').map(s=>s.trim());
- if(origin&&!allowed.includes(origin))return json(403,{error:'허용되지 않은 접속 주소야.'});
+ const origin=req.headers.get('origin'),allowed=allowedOrigins(env('BUSANGI_ALLOWED_ORIGINS'));
+ if(origin&&!allowed.has(origin))return json(403,{error:'허용되지 않은 접속 주소야.'});
  if(origin){headers['Access-Control-Allow-Origin']=origin;headers['Vary']='Origin';headers['Access-Control-Allow-Credentials']='true';}
  if(req.method==='OPTIONS'){headers['Access-Control-Allow-Methods']='GET, POST, OPTIONS';headers['Access-Control-Allow-Headers']='Content-Type, X-Plaza-Token, X-Busangi-Request';return new Response(null,{status:204,headers});}
  const url=new URL(req.url),path=url.pathname.replace(/^.*\/busangi-api(?=\/|$)/,'').replace(/\/$/,'');
@@ -131,4 +132,5 @@ export async function handler(req){
   return json(404,{error:'지원하지 않는 기능이야.'});
  }catch(e){const text=message[e.message]||e.message;return json(e.message==='SAVE_CONFLICT'?409:400,{error:text});}
 }
+
 
